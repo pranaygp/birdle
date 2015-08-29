@@ -1,0 +1,2 @@
+configurations.create("default")
+artifacts.add("default", file('MyID3_for_Android.jar'))

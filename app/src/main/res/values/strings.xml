@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Birdle</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="download_ticker">Downloading…</string>
+    <string name="content_title">Downloading Song</string>
+    <string name="title_activity_ytapp_intent_receiver">Download Song</string>
+
+</resources>
