@@ -11,24 +11,34 @@ import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.cmc.music.common.ID3WriteException;
 import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -64,6 +74,45 @@ public class downloadSong extends IntentService {
         super("downloadSong");
     }
 
+    public static String GET(String url){
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            // make GET request to the given URL
+            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+
+            // receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+
+            // convert inputstream to string
+            if(inputStream != null)
+                result = convertInputStreamToString(inputStream);
+            else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
+        }
+
+        return result;
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
@@ -76,11 +125,19 @@ public class downloadSong extends IntentService {
                 int length = data.length;
                 String[] urlO = data[(length-1)].split("/");
                 YTURL = "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)];
-                YTN = "";
-                for (int i = 0;i < (length-2);i++)
-                    YTN += data[i];
-                mNotificationHelper = new NotificationHelper(this, YTN);
-                getFile();
+                YTN = "Downloading Song...";
+
+                String JSONstring = GET("http://youtubeinmp3.com/fetch/?format=JSON&video=" + YTURL);
+                try {
+                    JSONObject JSON = new JSONObject(JSONstring);
+                    YTN = JSON.getString("title");
+                    mNotificationHelper = new NotificationHelper(this, YTN);
+                    getFile();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    sendNotification("JSON Error", "Please contact the dev or wait for an update");
+                }
             } else {
 
                 Bundle extras = intent.getExtras();
@@ -241,7 +298,7 @@ public class downloadSong extends IntentService {
         //This method runs on the UI thread, it receives progress updates
         //from the background thread and publishes them to the status bar
         mNotificationHelper.progressUpdate(progress[0]);
-        Log.i("Birdle", String.valueOf(progress[0]));
+        Log.i(TAG, String.valueOf(progress[0]));
     }
 
     private void sendNotification(String title, String msg) {
