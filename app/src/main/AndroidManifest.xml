@@ -51,6 +51,7 @@
 
         <activity
             android:name=".YTAppIntentReceiver"
+            android:theme="@android:style/Theme.Dialog"
             android:label="@string/title_activity_ytapp_intent_receiver" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

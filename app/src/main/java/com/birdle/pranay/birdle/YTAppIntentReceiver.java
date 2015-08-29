@@ -19,7 +19,7 @@ public class YTAppIntentReceiver extends Activity {
         Intent newIntent = new Intent(intent);
         newIntent.setClass(this, downloadSong.class);
         startService(newIntent);
-        finish();
+//        finish();
     }
 
 
