@@ -291,7 +291,9 @@ public class downloadSong extends IntentService {
             e.printStackTrace();
             sendNotification("Birdle Error", "Could not write ID3 tags.");
         }
-        stopForeground(true);
+//        stopForeground(true);
+        stopForeground(false);
+        sendNotification("Birdle", "Downloaded " + YTN);
     }
 
     protected void onProgressUpdate(Integer... progress) {
@@ -303,8 +305,8 @@ public class downloadSong extends IntentService {
 
     private void sendNotification(String title, String msg) {
         Uri messageTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, downloader.class), 0);
@@ -320,7 +322,7 @@ public class downloadSong extends IntentService {
                         .setLights(Color.GREEN, 3000, 1000);
 
         mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(2, mBuilder.build());
     }
 
     public static byte[] readFile (File file) throws IOException {
