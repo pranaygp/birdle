@@ -31,6 +31,7 @@ import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,6 +46,7 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Vector;
 
 /**
@@ -257,11 +259,26 @@ public class downloadSong extends IntentService {
             File img = resToFile();
 //            ImageData data = new ImageData(readFile(img), "image/jpeg", "Default Album Art",3);
 
+
+            String EchonestJSONString = GET("http://developer.echonest.com/api/v4/song/search?api_key=2CPBG5CSF0058GDDP&format=json&results=1&combined=" + URLEncoder.encode(YTN));
+            Log.i(TAG, EchonestJSONString);
+
+
+            JSONObject EchonestJSONObject = new JSONObject(EchonestJSONString);
+            EchonestJSONObject = EchonestJSONObject.getJSONObject("response");
+            JSONArray EchonestSongsJSONArray= EchonestJSONObject.getJSONArray("songs");
+            JSONObject EchonestMeta = EchonestSongsJSONArray.getJSONObject(0);
+
+
+            SetID3Data(); //TODO: define this function
+
             MusicMetadataSet src_set = new MyID3().read(file);
             MusicMetadata meta = (MusicMetadata) src_set.getSimplified();
+            meta.setSongTitle(EchonestMeta.getString("title"));
             meta.setAlbum("Birdle");
-            meta.setArtist("Pranay Prakash");
+            meta.setArtist(EchonestMeta.getString("artist_name"));
 //            meta.addPicture(data);
+
 
             File newFile = new File(BirdleDirectory, YTN + ".mp3");
             new MyID3().write(file, newFile, src_set,meta);
@@ -292,8 +309,15 @@ public class downloadSong extends IntentService {
         } catch (ID3WriteException e) {
             e.printStackTrace();
             sendNotification("Birdle Error", "Could not write ID3 tags.");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            sendNotification("Birdle Error", "Could not contact Echonest.", false);
         }
         stopForeground(true);
+    }
+
+    private void SetID3Data() {
+        //TODO: Move ID3 tagging functionality here
     }
 
     protected void onProgressUpdate(Integer... progress) {
