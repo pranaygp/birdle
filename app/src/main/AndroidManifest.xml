@@ -34,16 +34,6 @@
 
         </activity>
 
-        <receiver
-            android:name=".GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
-                <category android:name="com.birdle.pranay.birdle" />
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".downloadSong"
             android:exported="false" >
