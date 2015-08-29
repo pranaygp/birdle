@@ -59,7 +59,7 @@ import java.util.Vector;
 public class downloadSong extends IntentService {
 
     private NotificationHelper mNotificationHelper;
-    public static final Integer BUFFER_SIZE = 524288;
+    public static final Integer BUFFER_SIZE = 524288/2;
     private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
 
     private static final String PREFERENCE_FILE = "preference";
@@ -127,7 +127,7 @@ public class downloadSong extends IntentService {
 
             if (Intent.ACTION_SEND.equals(action) && type != null && "text/plain".equals(type)) {
                 String[] data = intent.getStringExtra(Intent.EXTRA_TEXT).split(":");
-                Log.i("Birdle_DATA", intent.getStringExtra(Intent.EXTRA_TEXT));
+                Log.i(TAG, " Data received: " + intent.getStringExtra(Intent.EXTRA_TEXT));
                 int length = data.length;
                 String[] urlO = data[(length-1)].split("/");
                 YTURL = "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)];
@@ -144,59 +144,6 @@ public class downloadSong extends IntentService {
                     e.printStackTrace();
                     sendNotification("JSON Error", "Please contact the dev or wait for an update", false);
                 }
-            } else {
-
-                Bundle extras = intent.getExtras();
-                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-                // The getMessageType() intent parameter must be the intent you received
-                // in your BroadcastReceiver.
-                String messageType = gcm.getMessageType(intent);
-
-                if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
-            /*
-             * Filter messages based on message type. Since it is likely that GCM
-             * will be extended in the future with new message types, just ignore
-             * any message types you're not interested in, or that you don't
-             * recognize.
-             */
-                    if (GoogleCloudMessaging.
-                            MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                        sendNotification("Birdle Error", "Unexpected \"Send error\"");
-                        Log.i(TAG, extras.toString());
-                    } else if (GoogleCloudMessaging.
-                            MESSAGE_TYPE_DELETED.equals(messageType)) {
-                        sendNotification("Birdle Error", "Reuse the Chrome extension" +
-                                extras.toString());
-                        // If it's a regular GCM message, do some work.
-                    } else if (GoogleCloudMessaging.
-                            MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                        // This loop represents the service doing some work.
-//                for (int i=0; i<5; i++) {
-//                    Log.i(TAG, "Working... " + (i + 1)
-//                            + "/5 @ " + SystemClock.elapsedRealtime());
-//                    try {
-//                        Thread.sleep(5000);
-//                    } catch (InterruptedException e) {
-//                    }
-//                }
-//                Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
-                        YTURL = extras.getString("url");
-                        YTN = extras.getString("name");
-
-//                        sendNotification("Birdle Debug", "Received: " + extras.getString("url"));
-                        Log.i(TAG, "Received: " + extras.toString());
-
-                        mNotificationHelper = new NotificationHelper(this, YTN);
-
-                        getFile();
-
-
-                        // Post notification of received message.
-
-                    }
-                }
-                // Release the wake lock provided by the WakefulBroadcastReceiver.
-                GcmBroadcastReceiver.completeWakefulIntent(intent);
             }
         }
     }
@@ -225,7 +172,7 @@ public class downloadSong extends IntentService {
             //sd card.
 //            File BirdleDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
             File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
-            BirdleDirectory.mkdirs();
+            BirdleDirectory.mkdirs(); //attempt to make the directory
             //create a new file, specifying the path, and the filename
             //which we want to save the file as.
             File file = new File(BirdleDirectory, YTN + "_temp.mp3");

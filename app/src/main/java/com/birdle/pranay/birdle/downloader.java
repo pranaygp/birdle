@@ -50,7 +50,7 @@ public class downloader extends Activity {
     String SENDER_ID = "1082112349274";
 
     TextView mDisplay;
-    GoogleCloudMessaging gcm;
+    //GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
     Context context;
@@ -64,6 +64,7 @@ public class downloader extends Activity {
         setContentView(R.layout.activity_downloader);
         mDisplay = (TextView) findViewById(R.id.mProgressText);
         context = getApplicationContext();
+        /*
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
@@ -75,6 +76,7 @@ public class downloader extends Activity {
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
+        */
 //        new downloadFile(getApplicationContext()).execute();
 
     }
@@ -184,6 +186,7 @@ public class downloader extends Activity {
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
+    /*
     private void registerInBackground() {
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -217,18 +220,23 @@ public class downloader extends Activity {
                 return msg;
             }
 
+
             @Override
             protected void onPostExecute(String msg) {
                 mDisplay.append(msg + "\n");
             }
         }.execute(null, null, null);
     }
+
+    */
     /**
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
      * or CCS to send messages to your app. Not needed for this demo since the
      * device sends upstream messages to a server that echoes back the message
      * using the 'from' address in the message.
      */
+
+    /*
     private void sendRegistrationIdToBackend() {
         // Create a new HttpClient and Post Header
         HttpClient httpclient = new DefaultHttpClient();
@@ -251,14 +259,15 @@ public class downloader extends Activity {
             // TODO Auto-generated catch block
         }
     }
-
+    */
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
      *
-     * @param context application's context.
-     * @param regId registration ID
+     * //@param context application's context.
+     * //@param regId registration ID
      */
+    /*
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);
@@ -268,7 +277,7 @@ public class downloader extends Activity {
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
-
+    */
     public String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
@@ -291,7 +300,7 @@ public class downloader extends Activity {
             return Character.toUpperCase(first) + s.substring(1);
         }
     }
-
+    /*
     static String getEmail(Context context) {
         AccountManager accountManager = AccountManager.get(context);
         Account account = getAccount(accountManager);
@@ -313,5 +322,6 @@ public class downloader extends Activity {
         }
         return account;
     }
+    */
 }
 
