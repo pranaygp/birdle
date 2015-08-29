@@ -1,0 +1,77 @@
+Activity Resolver Table:
+  Full MIME Types:
+      text/plain:
+        42deee18 com.birdle.pranay.birdle/.YTAppIntentReceiver filter 42dbaa48
+          Action: "android.intent.action.SEND"
+          Category: "android.intent.category.DEFAULT"
+          Type: "text/plain"
+
+  Base MIME Types:
+      text:
+        42deee18 com.birdle.pranay.birdle/.YTAppIntentReceiver filter 42dbaa48
+          Action: "android.intent.action.SEND"
+          Category: "android.intent.category.DEFAULT"
+          Type: "text/plain"
+
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        42f1b550 com.birdle.pranay.birdle/.downloader filter 42ee49a8
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+
+  MIME Typed Actions:
+      android.intent.action.SEND:
+        42deee18 com.birdle.pranay.birdle/.YTAppIntentReceiver filter 42dbaa48
+          Action: "android.intent.action.SEND"
+          Category: "android.intent.category.DEFAULT"
+          Type: "text/plain"
+
+Receiver Resolver Table:
+  Non-Data Actions:
+      com.google.android.c2dm.intent.RECEIVE:
+        42e88c10 com.birdle.pranay.birdle/.GcmBroadcastReceiver filter 42e4ad38
+          Action: "com.google.android.c2dm.intent.RECEIVE"
+          Category: "com.birdle.pranay.birdle"
+
+Permissions:
+  Permission [com.birdle.pranay.birdle.permission.C2D_MESSAGE] (434a9710):
+    sourcePackage=com.birdle.pranay.birdle
+    uid=10142 gids=[] type=0 prot=signature
+    packageSetting=PackageSetting{431505f0 com.birdle.pranay.birdle/10142}
+    perm=Permission{42f64828 com.birdle.pranay.birdle.permission.C2D_MESSAGE}
+
+Key Set Manager:
+  [com.birdle.pranay.birdle]
+      Signing KeySets: 4
+
+Packages:
+  Package [com.birdle.pranay.birdle] (431505f0):
+    userId=10142 gids=[1028, 1015, 3003]
+    pkg=Package{42fc1ba8 com.birdle.pranay.birdle}
+    codePath=/data/app/com.birdle.pranay.birdle-24.apk
+    resourcePath=/data/app/com.birdle.pranay.birdle-24.apk
+    nativeLibraryPath=/data/app-lib/com.birdle.pranay.birdle-24
+    versionCode=1 targetSdk=21
+    versionName=1.0
+    applicationInfo=ApplicationInfo{42fbb460 com.birdle.pranay.birdle}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    dataDir=/data/data/com.birdle.pranay.birdle
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2015-08-29 03:35:21
+    firstInstallTime=2015-08-28 21:18:02
+    lastUpdateTime=2015-08-29 03:35:24
+    signatures=PackageSignatures{43481f98 [43a20bd8]}
+    permissionsFixed=true haveGids=true installStatus=1
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    User 0:  installed=true blocked=false stopped=false notLaunched=false enabled=0
+    grantedPermissions:
+      android.permission.READ_EXTERNAL_STORAGE
+      com.birdle.pranay.birdle.permission.C2D_MESSAGE
+      android.permission.GET_ACCOUNTS
+      android.permission.WAKE_LOCK
+      android.permission.INTERNET
+      android.permission.WRITE_EXTERNAL_STORAGE
+      com.google.android.c2dm.permission.RECEIVE
+ 
+mEnforceCopyingLibPackages:
+End!!!!

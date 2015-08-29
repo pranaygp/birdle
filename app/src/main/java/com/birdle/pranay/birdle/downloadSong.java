@@ -3,6 +3,7 @@ package com.birdle.pranay.birdle;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -275,7 +277,7 @@ public class downloadSong extends IntentService {
                         }
                     });
             file.delete();
-            sendNotification("Birdle", "Downloaded " + YTN);
+            sendNotification("Birdle", "Downloaded " + YTN, true);
 //catch some possible errors...
         } catch (FileNotFoundException e){
             e.printStackTrace();
@@ -291,9 +293,7 @@ public class downloadSong extends IntentService {
             e.printStackTrace();
             sendNotification("Birdle Error", "Could not write ID3 tags.");
         }
-//        stopForeground(true);
-        stopForeground(false);
-        sendNotification("Birdle", "Downloaded " + YTN);
+        stopForeground(true);
     }
 
     protected void onProgressUpdate(Integer... progress) {
@@ -303,13 +303,31 @@ public class downloadSong extends IntentService {
         Log.i(TAG, String.valueOf(progress[0]));
     }
 
-    private void sendNotification(String title, String msg) {
+    private void sendNotification(String title, String msg, Boolean... options) {
         Uri messageTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, downloader.class), 0);
+        PendingIntent contentIntent;
+
+        if (options[0] != null && options[0]){
+            Intent intent = new Intent();
+            ComponentName comp = new ComponentName("com.android.music", "com.android.music.MediaPlaybackActivity");
+            intent.setComponent(comp);
+            intent.setAction(android.content.Intent.ACTION_RUN);
+
+            File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
+            BirdleDirectory.mkdirs();
+            File file = new File(BirdleDirectory, YTN + ".mp3");
+
+            intent.setDataAndType(Uri.fromFile(file), "audio/*");
+
+            contentIntent = PendingIntent.getActivity(this, 0,
+                    intent, 0);
+        } else {
+            contentIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, downloader.class), 0);
+        }
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -319,7 +337,8 @@ public class downloadSong extends IntentService {
                                 .bigText(msg))
                         .setContentText(msg)
                         .setSound(messageTone)
-                        .setLights(Color.GREEN, 3000, 1000);
+                        .setLights(Color.GREEN, 3000, 1000)
+                        .setAutoCancel(true);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(2, mBuilder.build());
