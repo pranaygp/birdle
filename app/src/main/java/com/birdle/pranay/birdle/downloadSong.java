@@ -59,6 +59,8 @@ import java.util.Vector;
 public class downloadSong extends IntentService {
 
     private NotificationHelper mNotificationHelper;
+    public static final Integer BUFFER_SIZE = 524288;
+    private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
 
     private static final String PREFERENCE_FILE = "preference";
     private static final String ISDOWNLOADED = "isdownloaded";
@@ -140,7 +142,7 @@ public class downloadSong extends IntentService {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    sendNotification("JSON Error", "Please contact the dev or wait for an update");
+                    sendNotification("JSON Error", "Please contact the dev or wait for an update", false);
                 }
             } else {
 
@@ -227,7 +229,7 @@ public class downloadSong extends IntentService {
             //create a new file, specifying the path, and the filename
             //which we want to save the file as.
             File file = new File(BirdleDirectory, YTN + "_temp.mp3");
-            Log.i("Birdle: Song Name", YTN);
+            Log.i("Birdle", "Song name: " + YTN);
 
             //this will be used to write the downloaded data into the file we created
             FileOutputStream fileOutput = new FileOutputStream(file);
@@ -240,7 +242,7 @@ public class downloadSong extends IntentService {
             int downloadedSize = 0;
 
             //create a buffer...
-            byte[] buffer = new byte[65536];
+            byte[] buffer = new byte[BUFFER_SIZE];
             int bufferLength = 0; //used to store a temporary size of the buffer
 
             //now, read through the input buffer and write the contents to the file
@@ -260,7 +262,7 @@ public class downloadSong extends IntentService {
 //            ImageData data = new ImageData(readFile(img), "image/jpeg", "Default Album Art",3);
 
 
-            String EchonestJSONString = GET("http://developer.echonest.com/api/v4/song/search?api_key=2CPBG5CSF0058GDDP&format=json&results=1&combined=" + URLEncoder.encode(YTN));
+            String EchonestJSONString = GET("http://developer.echonest.com/api/v4/song/search?api_key=" + ECHONEST_API_KEY + "&format=json&results=1&combined=" + URLEncoder.encode(YTN));
             Log.i(TAG, EchonestJSONString);
 
 
