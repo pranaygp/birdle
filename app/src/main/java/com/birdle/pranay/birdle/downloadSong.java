@@ -46,7 +46,7 @@ public class downloadSong extends IntentService {
 
     private NotificationHelper mNotificationHelper;
 
-    private static final String PEFERENCE_FILE = "preference";
+    private static final String PREFERENCE_FILE = "preference";
     private static final String ISDOWNLOADED = "isdownloaded";
     private static String YTURL;
     private static String YTN;
@@ -72,6 +72,7 @@ public class downloadSong extends IntentService {
 
             if (Intent.ACTION_SEND.equals(action) && type != null && "text/plain".equals(type)) {
                 String[] data = intent.getStringExtra(Intent.EXTRA_TEXT).split(":");
+                Log.i("Birdle_DATA", intent.getStringExtra(Intent.EXTRA_TEXT));
                 int length = data.length;
                 String[] urlO = data[(length-1)].split("/");
                 YTURL = "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)];
@@ -165,6 +166,7 @@ public class downloadSong extends IntentService {
             //create a new file, specifying the path, and the filename
             //which we want to save the file as.
             File file = new File(BirdleDirectory, YTN + "_temp.mp3");
+            Log.i("Birdle: Song Name", YTN);
 
             //this will be used to write the downloaded data into the file we created
             FileOutputStream fileOutput = new FileOutputStream(file);
@@ -194,13 +196,13 @@ public class downloadSong extends IntentService {
             //close the output stream when done
             fileOutput.close();
             File img = resToFile();
-            ImageData data = new ImageData(readFile(img), "image/jpeg", "Default Album Art",3);
+//            ImageData data = new ImageData(readFile(img), "image/jpeg", "Default Album Art",3);
 
             MusicMetadataSet src_set = new MyID3().read(file);
             MusicMetadata meta = (MusicMetadata) src_set.getSimplified();
             meta.setAlbum("Birdle");
             meta.setArtist("Pranay Prakash");
-            meta.addPicture(data);
+//            meta.addPicture(data);
 
             File newFile = new File(BirdleDirectory, YTN + ".mp3");
             new MyID3().write(file, newFile, src_set,meta);
@@ -286,27 +288,28 @@ public class downloadSong extends IntentService {
         return data;
     }
     private File resToFile() {
-        File BirdlePicsDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/Birdle/");
-        BirdlePicsDir.mkdirs();
-        File file = new File(BirdlePicsDir, "default_album_art.jpg");
-        if(file.exists()) {
-            return file;
-        }
-
-        InputStream is;
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            AssetManager am = getApplicationContext().getResources().getAssets();
-            is = am.open("default_album_art.jpg");
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
+//        File BirdlePicsDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/Birdle/");
+//        BirdlePicsDir.mkdirs();
+//        File file = new File(BirdlePicsDir, "default_album_art.jpg");
+//        if(file.exists()) {
+//            return file;
+//        }
+//
+//        InputStream is;
+//        try {
+//            FileOutputStream fos = new FileOutputStream(file);
+//            AssetManager am = getApplicationContext().getResources().getAssets();
+//            is = am.open("default_album_art.jpg");
+//            byte[] buffer = new byte[is.available()];
+//            is.read(buffer);
 //            fos = openFileOutput(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"default_album_art.jpg");
-            fos.write(buffer);
-            fos.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file;
+//            fos.write(buffer);
+//            fos.close();
+//            is.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return file;
+        return null;
     }
 }
