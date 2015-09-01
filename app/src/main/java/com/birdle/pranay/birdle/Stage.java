@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 public class Stage extends ActionBarActivity {
 
@@ -18,6 +20,7 @@ public class Stage extends ActionBarActivity {
         //s,s,ns,s,s>
 
         //TODO:Do it with ListView
+        //TODO: or look into addChild to do this dynamically
 
         //Fill our list View
         TextView[] songTexts = {
@@ -27,9 +30,23 @@ public class Stage extends ActionBarActivity {
                 (TextView) findViewById(R.id.song4Text)
 
         };
+
         for(int i=0; i<songTexts.length; i++) {
             songTexts[i].setText(songs[i].getTitle() + " by " + songs[i].getArtist());
         }
+
+        //Fill our list View
+        ImageView[] songImages = {
+                (ImageView) findViewById(R.id.song1Image),
+                (ImageView) findViewById(R.id.song2Image),
+                (ImageView) findViewById(R.id.song3Image),
+                (ImageView) findViewById(R.id.song4Image)  };
+
+        for(int i=0; i<songImages.length; i++) {
+            songImages[i].setImageBitmap(songs[i].getArt());
+        }
+
+
 
     }
 
