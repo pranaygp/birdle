@@ -1,13 +1,12 @@
 package com.birdle.pranay.birdle;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 
 public class Stage extends ActionBarActivity {
 
@@ -31,7 +30,7 @@ public class Stage extends ActionBarActivity {
 
         };
 
-        for(int i=0; i<songTexts.length; i++) {
+        for (int i = 0; i < songTexts.length; i++) {
             songTexts[i].setText(songs[i].getTitle() + " by " + songs[i].getArtist());
         }
 
@@ -40,12 +39,11 @@ public class Stage extends ActionBarActivity {
                 (ImageView) findViewById(R.id.song1Image),
                 (ImageView) findViewById(R.id.song2Image),
                 (ImageView) findViewById(R.id.song3Image),
-                (ImageView) findViewById(R.id.song4Image)  };
+                (ImageView) findViewById(R.id.song4Image)};
 
-        for(int i=0; i<songImages.length; i++) {
+        for (int i = 0; i < songImages.length; i++) {
             songImages[i].setImageBitmap(songs[i].getArt());
         }
-
 
 
     }
