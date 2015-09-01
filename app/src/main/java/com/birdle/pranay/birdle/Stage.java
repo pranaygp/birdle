@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 public class Stage extends ActionBarActivity {
 
@@ -13,8 +14,22 @@ public class Stage extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        Object[] songs;  //TODO: this is where we get array of songs
+        song[] songs = song.list();  //TODO: this is where we get array of songs
+        //s,s,ns,s,s>
 
+        //TODO:Do it with ListView
+
+        //Fill our list View
+        TextView[] songTexts = {
+                (TextView) findViewById(R.id.song1Text),
+                (TextView) findViewById(R.id.song2Text),
+                (TextView) findViewById(R.id.song3Text),
+                (TextView) findViewById(R.id.song4Text)
+
+        };
+        for(int i=0; i<songTexts.length; i++) {
+            songTexts[i].setText(songs[i].getTitle() + " by " + songs[i].getArtist());
+        }
 
     }
 
