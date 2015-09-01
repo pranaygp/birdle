@@ -31,7 +31,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <service
@@ -41,14 +40,23 @@
 
         <activity
             android:name=".YTAppIntentReceiver"
-            android:theme="@android:style/Theme.Dialog"
-            android:label="@string/title_activity_ytapp_intent_receiver" >
+            android:label="@string/title_activity_ytapp_intent_receiver"
+            android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Stage"
+            android:label="@string/title_activity_stage" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
