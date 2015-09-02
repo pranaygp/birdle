@@ -18,7 +18,7 @@ public class Stage extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        final Song[] songs = Song.list();  //TODO: this is where we get array of songs
+        //final Song[] songs = Song.list();  //TODO: this is where we get array of songs
         //s,s,ns,s,s>
 
         //TODO:Do it with ListView
@@ -28,13 +28,13 @@ public class Stage extends ActionBarActivity {
         TextView[] songTexts = {
                 (TextView) findViewById(R.id.song1Text),
                 (TextView) findViewById(R.id.song2Text),
-                (TextView) findViewById(R.id.song3Text),
-                (TextView) findViewById(R.id.song4Text)
+                //(TextView) findViewById(R.id.song3Text),
+                //(TextView) findViewById(R.id.song4Text)
 
         };
 
         for (int i = 0; i < songTexts.length; i++) {
-            songTexts[i].setText(songs[i].getTitle() + " by " + songs[i].getArtist());
+            songTexts[i].setText("Test title by test artist"/*songs[i].getTitle() + " by " + songs[i].getArtist()*/);
             //set up gesture recognition
             songTexts[i].setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -58,7 +58,7 @@ public class Stage extends ActionBarActivity {
                 (ImageView) findViewById(R.id.song4Image)};
 
         for (int i = 0; i < songImages.length; i++) {
-            songImages[i].setImageBitmap( songs[i].getArt());
+            //songImages[i].setImageBitmap( songs[i].getArt());
         }
 
 
