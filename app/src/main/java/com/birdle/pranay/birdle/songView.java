@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.GestureDetector;
 /**
  * a single song element
+ *
+ * TODO: Make this a thing
  */
 public class songView extends View implements
         GestureDetector.OnGestureListener  {

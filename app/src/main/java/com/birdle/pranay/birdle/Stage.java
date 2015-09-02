@@ -8,10 +8,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.view.ViewGroup;
 import android.support.v4.view.MotionEventCompat;
 
 
 public class Stage extends ActionBarActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,10 +22,20 @@ public class Stage extends ActionBarActivity {
 
         //final Song[] songs = Song.list();  //TODO: this is where we get array of songs
         //s,s,ns,s,s>
+        Object[] songs = new Object[2];
 
-        //TODO:Do it with ListView
-        //TODO: or look into addChild to do this dynamically
+        songView[] songElements = new songView[songs.length];
 
+        //dynamically add the elements
+        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+
+        for (int i = 0; i < songs.length; i++) {
+            songElements[i] = new songView(this, (Song) songs[i]);
+
+            root.addView(songElements[i]);
+        }
+
+        //should be able to delete this
         //Fill our list View
         TextView[] songTexts = {
                 (TextView) findViewById(R.id.song1Text),
@@ -33,7 +45,13 @@ public class Stage extends ActionBarActivity {
 
         };
 
+
+
+
         for (int i = 0; i < songTexts.length; i++) {
+
+
+
             songTexts[i].setText("Test title by test artist"/*songs[i].getTitle() + " by " + songs[i].getArtist()*/);
             //set up gesture recognition
             songTexts[i].setOnTouchListener(new View.OnTouchListener() {
@@ -58,7 +76,7 @@ public class Stage extends ActionBarActivity {
                 (ImageView) findViewById(R.id.song4Image)};
 
         for (int i = 0; i < songImages.length; i++) {
-            //songImages[i].setImageBitmap( songs[i].getArt());
+            //songImages[i].setImage( songs[i].getArt());
         }
 
 
