@@ -2,6 +2,8 @@ package com.birdle.pranay.birdle;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.ArrayMap;
 
 import java.util.ArrayList;
@@ -24,7 +26,8 @@ public class Song {
     private String title;
     private String artist;
     private String album;
-    private String albumArt;
+    private Bitmap albumArt;
+
 
     // CONSTRUCTORS
 
@@ -112,6 +115,11 @@ public class Song {
 
     // GETTERS AND SETTERS
 
+
+    public long getID() {
+        return ID;
+    }
+
     public String getFile() {
         return file;
     }
@@ -144,11 +152,11 @@ public class Song {
         this.album = album;
     }
 
-    public String getAlbumArt() {
+    public Bitmap getAlbumArt() {
         return albumArt;
     }
 
-    public void setAlbumArt(String albumArt) {
+    public void setAlbumArt(Bitmap albumArt) {
         this.albumArt = albumArt;
     }
 
