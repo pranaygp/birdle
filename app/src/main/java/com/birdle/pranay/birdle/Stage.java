@@ -15,7 +15,7 @@ public class Stage extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        song[] songs = song.list();  //TODO: this is where we get array of songs
+        Song[] songs = Song.list();  //TODO: this is where we get array of songs
         //s,s,ns,s,s>
 
         //TODO:Do it with ListView

@@ -24,7 +24,7 @@ public class Song {
     private String title;
     private String artist;
     private String album;
-    private String albumArt;
+    private String albumArt; //Why is this a string
 
     // CONSTRUCTORS
 
