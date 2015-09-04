@@ -5,10 +5,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.Environment;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import org.cmc.music.metadata.ImageData;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -24,12 +33,11 @@ public class Song {
 
     private String YTN;
     private String YTURL;
-
-    private String file;
     private String title;
     private String artist;
     private String album;
 
+    private static final String TAG = "Birdle";
 
     // CONSTRUCTORS
 
@@ -60,10 +68,70 @@ public class Song {
 
     // PUBLIC FUNCTIONS
 
-    public void download(){
+    public void download(NotificationHelper mNotificationHelper) throws IOException{
+
+        Integer BUFFER_SIZE = 262144;
+
         // fetchYTN
+        fetchYTN();
         // Download to staging area
+
+        //set the download URL, a url that points to a file on the internet
+        //this is the file to be downloaded
+
+        URL url = new URL("http://youtubeinmp3.com/fetch/?video=" + YTURL);
+
+        //create the new connection
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+        //set up some things on the connection
+        urlConnection.setRequestMethod("GET");
+        urlConnection.setDoOutput(true);
+
+        InputStream inputStream = urlConnection.getInputStream();
+        urlConnection.connect();
+
+        //set the path where we want to save the file
+        //in this case, going to save it on the birdle directory under MUSIC
+
+        File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
+        BirdleDirectory.mkdirs(); //attempt to make the directory
+
+        //create a new temp STAGING file, specifying the path, and the filename
+        //which we want to save the file as.
+        File file = new File(BirdleDirectory, YTN + "_temp.mp3");
+        Log.i("Birdle", "Song name: " + YTN);
+
+        //this will be used to write the downloaded data into the file we created
+        FileOutputStream fileOutput = new FileOutputStream(file);
+
+        //this will be used in reading the data from the internet
+
+        //this is the total size of the file
+        int totalSize = urlConnection.getContentLength();
+        //variable to store total downloaded bytes
+        int downloadedSize = 0;
+
+        //create a buffer...
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bufferLength = 0; //used to store a temporary size of the buffer
+
+        //now, read through the input buffer and write the contents to the file
+        while ((bufferLength = inputStream.read(buffer)) > 0) {
+            //add the data in the buffer to the file in the file output stream (the file on the sd card
+            fileOutput.write(buffer, 0, bufferLength);
+            //add up the size so we know how much is downloaded
+            downloadedSize += bufferLength;
+            //this is where you would do something to report the prgress, like this maybe
+            //updateProgress(downloadedSize, totalSize);
+            onProgressUpdate(mNotificationHelper, (int) ((downloadedSize * 100) / totalSize));
+
+        }
+        //close the output stream when done
+        fileOutput.close();
+
         // Update file field
+
     }
 
     public void pullMeta(){
@@ -105,12 +173,18 @@ public class Song {
 
     // INTERNAL HELPER FUNCTIONS
 
+    protected void onProgressUpdate(NotificationHelper mNotificationHelper, Integer... progress) {
+        //This method runs on the UI thread, it receives progress updates
+        //from the background thread and publishes them to the status bar
+        mNotificationHelper.progressUpdate(progress[0]);
+        Log.i(TAG, String.valueOf(progress[0]));
+    }
+
     private void assignFieldsFromCursor(Cursor c){
         c.moveToFirst();
         this.ID = c.getInt(c.getColumnIndexOrThrow(SongContract.SongSchema._ID));;
         this.YTN = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_YTN));
         this.YTURL = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_YTURL));
-        this.file = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_FILE));
         this.title = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_TITLE));
         this.artist = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_ARTIST));
         this.album = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_ALBUM));
@@ -147,12 +221,10 @@ public class Song {
         return ID;
     }
 
-    public String getFile() {
+    public File getFile() {
+        File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
+        File file = new File(BirdleDirectory, YTN + "_temp.mp3");
         return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
     }
 
     public String getTitle() {
