@@ -10,13 +10,12 @@ public final class SongContract {
 
     public static abstract class SongSchema implements BaseColumns {
         public static final String TABLE_NAME = "songs";
-        public static final String COLUMN_NAME_SONG_FILE = "file";
         public static final String COLUMN_NAME_SONG_YTN = "YTN";
         public static final String COLUMN_NAME_SONG_YTURL = "YTURL";
+        public static final String COLUMN_NAME_SONG_FILE = "file";
         public static final String COLUMN_NAME_SONG_TITLE = "title";
         public static final String COLUMN_NAME_SONG_ARTIST = "artist";
         public static final String COLUMN_NAME_SONG_ALBUM = "album";
-        public static final String COLUMN_NAME_SONG_ALBUM_ART = "albumArt";
 
         public static final String[] COLUMN_NAMES= {
                 _ID,
@@ -26,7 +25,6 @@ public final class SongContract {
                 COLUMN_NAME_SONG_TITLE,
                 COLUMN_NAME_SONG_ARTIST,
                 COLUMN_NAME_SONG_ALBUM,
-                COLUMN_NAME_SONG_ALBUM_ART,
         };
 
     }

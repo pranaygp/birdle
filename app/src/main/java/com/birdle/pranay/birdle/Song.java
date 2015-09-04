@@ -2,9 +2,12 @@ package com.birdle.pranay.birdle;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.util.ArrayMap;
+
+import org.cmc.music.metadata.ImageData;
 
 import java.util.ArrayList;
 
@@ -17,7 +20,7 @@ public class Song {
 
     private long ID;
 
-//    private static songDBHelper;
+    private static SongDBHelper mDBHelper;
 
     private String YTN;
     private String YTURL;
@@ -26,20 +29,33 @@ public class Song {
     private String title;
     private String artist;
     private String album;
-    private Bitmap albumArt;
 
 
     // CONSTRUCTORS
 
     public Song(Context context, String YTURL){
+        // Initialize DB Helper
+        mDBHelper = new SongDBHelper(context);
+
         this.YTURL = YTURL;
         fetchYTN();
-        // Initialize DB Helper
     }
 
     public Song(Context context, long id){
         // Initialize DB Helper
+        mDBHelper = new SongDBHelper(context);
+
         // Initialize song with data from DB
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+
+        String testColumns = SongContract.SongSchema._ID + " = ?";
+        String[] testColumnsArgs = {
+                String.valueOf(id)
+        };
+
+        Cursor c = db.query(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema.COLUMN_NAMES, testColumns, testColumnsArgs, null, null, null);
+        assignFieldsFromCursor(c);
+        c.close();
     }
 
     // PUBLIC FUNCTIONS
@@ -88,6 +104,17 @@ public class Song {
     }
 
     // INTERNAL HELPER FUNCTIONS
+
+    private void assignFieldsFromCursor(Cursor c){
+        c.moveToFirst();
+        this.ID = c.getInt(c.getColumnIndexOrThrow(SongContract.SongSchema._ID));;
+        this.YTN = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_YTN));
+        this.YTURL = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_YTURL));
+        this.file = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_FILE));
+        this.title = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_TITLE));
+        this.artist = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_ARTIST));
+        this.album = c.getString(c.getColumnIndexOrThrow(SongContract.SongSchema.COLUMN_NAME_SONG_ALBUM));
+    }
 
     private static Cursor getListOfItems(){
         // Get List of songs as cursor
@@ -152,12 +179,13 @@ public class Song {
         this.album = album;
     }
 
-    public Bitmap getAlbumArt() {
-        return albumArt;
+    public ImageData getAlbumArt() {
+        // Get File and return it as ImageData
+        return null;
     }
 
-    public void setAlbumArt(Bitmap albumArt) {
-        this.albumArt = albumArt;
+    public void setAlbumArt(String albumArt) {
+        // Parse String as URL and save the downloaded image to File
     }
 
 }
