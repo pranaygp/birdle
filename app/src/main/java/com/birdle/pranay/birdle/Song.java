@@ -265,7 +265,11 @@ public class Song {
 
     private static Cursor getListOfItems(){
         // Get List of songs as cursor
-        return null;
+
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        Cursor c = db.query(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema.COLUMN_NAMES, null, null, null, null, null);
+
+        return c;
     }
 
     private ArrayMap<String, String> getMetaFromPuller(){
