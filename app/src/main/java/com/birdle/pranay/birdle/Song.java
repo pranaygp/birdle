@@ -1,5 +1,6 @@
 package com.birdle.pranay.birdle;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -182,7 +183,20 @@ public class Song {
         // Save meta to SQL Database using current fields
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
 
-        if (ID != null)
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SongContract.SongSchema.COLUMN_NAME_SONG_YTN, YTN);
+        contentValues.put(SongContract.SongSchema.COLUMN_NAME_SONG_YTURL, YTURL);
+        contentValues.put(SongContract.SongSchema.COLUMN_NAME_SONG_TITLE, title);
+        contentValues.put(SongContract.SongSchema.COLUMN_NAME_SONG_ARTIST, artist);
+        contentValues.put(SongContract.SongSchema.COLUMN_NAME_SONG_ALBUM, album);
+
+        if (ID != 0){
+            String[] whereArgs = { String.valueOf(ID) };
+
+            db.update(SongContract.SongSchema.TABLE_NAME, contentValues, SongContract.SongSchema._ID + " = ?", whereArgs);
+        } else {
+            ID = db.insert(SongContract.SongSchema.TABLE_NAME, null, contentValues);
+        }
 
     }
 
