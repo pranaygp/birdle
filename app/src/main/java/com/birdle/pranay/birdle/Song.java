@@ -274,11 +274,6 @@ public class Song {
         return null;
     }
 
-    private void saveMetaToDB(ArrayMap<String, String> metaArrayMap){
-        // Parse and save meta to SQL Database
-    }
-
-
     private void fetchYTN(){
         // Call youtubeinmp3 advanced API to get YTN using YTURL
     }
