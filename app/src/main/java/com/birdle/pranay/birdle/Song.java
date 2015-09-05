@@ -143,6 +143,8 @@ public class Song {
     public static Song[] list(){
         // Returns array of Songs from DB
         Cursor songsCursor = getListOfItems();
+        Song[] songList;
+
         return null;
     }
 
@@ -160,6 +162,10 @@ public class Song {
 
     public void delete(){
         // Delete meta from db
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        String[] whereArgs = {String.valueOf(ID)};
+
+        db.delete(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema._ID + "=?",whereArgs);
     }
 
     public void save(){
