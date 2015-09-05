@@ -167,7 +167,13 @@ public class Song {
     public static ArrayList<Song> listAsArrayList(){
         // Returns an ArrayList containing a list of all the songs from the database
         Cursor songsCursor = getListOfItems();
-        return null;
+        ArrayList<Song> arrayList = new ArrayList<Song>();
+        for (Song song:
+             list()) {
+            arrayList.add(song);
+        }
+
+        return arrayList;
     }
 
     public static Cursor listAsCursor(){
