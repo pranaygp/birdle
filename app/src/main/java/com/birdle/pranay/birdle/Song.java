@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -31,6 +33,7 @@ public class Song {
     private long ID;
 
     private static SongDBHelper mDBHelper;
+    private Context mContext;
 
     private String YTN;
     private String YTURL;
@@ -43,6 +46,9 @@ public class Song {
     // CONSTRUCTORS
 
     public Song(Context context, String YTURL){
+        // Initialize Context
+        mContext = context;
+
         // Initialize DB Helper
         mDBHelper = new SongDBHelper(context);
 
@@ -52,6 +58,9 @@ public class Song {
     }
 
     public Song(Context context, long id){
+        //Initialize Context
+        mContext = context;
+
         // Initialize DB Helper
         mDBHelper = new SongDBHelper(context);
 
@@ -131,9 +140,6 @@ public class Song {
         }
         //close the output stream when done
         fileOutput.close();
-
-        // Update file field
-
     }
 
     public void pullMeta(){
@@ -177,7 +183,7 @@ public class Song {
         saveMetaToDB();
 
         // Save Data on File
-
+        File songFile = getFile();
     }
 
     public void saveMetaToDB(){
@@ -242,6 +248,17 @@ public class Song {
 
     private void saveMetaToFile(){
         // Save meta from the object to an mp3 file and deletes the temporary birdle file
+    }
+
+    private void scanMedia(File file){
+        MediaScannerConnection.scanFile(mContext,
+                new String[]{file.toString()}, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.i("ExternalStorage", "Scanned " + path + ":");
+                        Log.i("ExternalStorage", "-> uri=" + uri);
+                    }
+                });
     }
 
     // GETTERS AND SETTERS
