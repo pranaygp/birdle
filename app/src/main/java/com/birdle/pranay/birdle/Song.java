@@ -170,7 +170,11 @@ public class Song {
 
     public void save(){
         //helper to call saveMetaToDB and then save data on file
+
+        // Call saveMetaToDB
         saveMetaToDB();
+
+        // Save Data on File
     }
 
     public void saveMetaToDB(){
