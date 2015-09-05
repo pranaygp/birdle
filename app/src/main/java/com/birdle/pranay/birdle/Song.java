@@ -45,6 +45,7 @@ public class Song {
         // Initialize DB Helper
         mDBHelper = new SongDBHelper(context);
 
+        this.ID = 0;
         this.YTURL = YTURL;
         fetchYTN();
     }
@@ -179,6 +180,10 @@ public class Song {
 
     public void saveMetaToDB(){
         // Save meta to SQL Database using current fields
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+
+        if (ID != null)
+
     }
 
     // INTERNAL HELPER FUNCTIONS
