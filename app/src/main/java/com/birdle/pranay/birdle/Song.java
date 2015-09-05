@@ -37,7 +37,7 @@ public class Song {
     private long ID;
 
     private static SongDBHelper mDBHelper;
-    private Context mContext;
+    private static Context mContext;
 
     public static final File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
 
@@ -153,9 +153,15 @@ public class Song {
     public static Song[] list(){
         // Returns array of Songs from DB
         Cursor songsCursor = getListOfItems();
-        Song[] songList;
+        Song[] songList = {};
+        songsCursor.moveToFirst();
 
-        return null;
+        for (int i = 0; i < songsCursor.getCount(); i++) {
+            songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
+            songsCursor.moveToNext();
+        }
+
+        return songList;
     }
 
     public static ArrayList<Song> listAsArrayList(){
