@@ -101,7 +101,7 @@ public class Song {
 
         //create a new temp STAGING file, specifying the path, and the filename
         //which we want to save the file as.
-        File file = new File(BirdleDirectory, YTN + "_temp.mp3");
+        File file = new File(BirdleDirectory, YTN + ".birdle");
         Log.i("Birdle", "Song name: " + YTN);
 
         //this will be used to write the downloaded data into the file we created
@@ -177,6 +177,7 @@ public class Song {
         saveMetaToDB();
 
         // Save Data on File
+
     }
 
     public void saveMetaToDB(){
@@ -252,7 +253,7 @@ public class Song {
 
     public File getFile() {
         File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
-        File file = new File(BirdleDirectory, YTN + "_temp.mp3");
+        File file = new File(BirdleDirectory, YTN + ".birdle");
         return file;
     }
 
