@@ -12,7 +12,11 @@ import android.os.Environment;
 import android.util.ArrayMap;
 import android.util.Log;
 
+import org.cmc.music.common.ID3WriteException;
 import org.cmc.music.metadata.ImageData;
+import org.cmc.music.metadata.MusicMetadata;
+import org.cmc.music.metadata.MusicMetadataSet;
+import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,6 +38,8 @@ public class Song {
 
     private static SongDBHelper mDBHelper;
     private Context mContext;
+
+    public static final File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
 
     private String YTN;
     private String YTURL;
@@ -102,10 +108,6 @@ public class Song {
         InputStream inputStream = urlConnection.getInputStream();
         urlConnection.connect();
 
-        //set the path where we want to save the file
-        //in this case, going to save it on the birdle directory under MUSIC
-
-        File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
         BirdleDirectory.mkdirs(); //attempt to make the directory
 
         //create a new temp STAGING file, specifying the path, and the filename
@@ -184,6 +186,29 @@ public class Song {
 
         // Save Data on File
         File songFile = getFile();
+
+
+        MusicMetadataSet src_set = null;
+        try {
+            src_set = new MyID3().read(songFile);
+            MusicMetadata meta = (MusicMetadata) src_set.getSimplified();
+            meta.setSongTitle(title);
+            meta.setAlbum("Birdle");
+            meta.setArtist(artist);
+//            meta.addPicture(getAlbumArt());
+
+
+            File newFile = new File(BirdleDirectory, YTN + ".mp3");
+            new MyID3().write(songFile, newFile, src_set,meta);
+
+            scanMedia(newFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "save could not read Song File");
+        } catch (ID3WriteException e) {
+            e.printStackTrace();
+            Log.e(TAG, "save could not write meta data");
+        }
     }
 
     public void saveMetaToDB(){
@@ -269,7 +294,6 @@ public class Song {
     }
 
     public File getFile() {
-        File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
         File file = new File(BirdleDirectory, YTN + ".birdle");
         return file;
     }
