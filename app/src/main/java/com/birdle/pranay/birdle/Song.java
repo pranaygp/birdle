@@ -192,14 +192,13 @@ public class Song {
 
     public void save(){
         //helper to call saveMetaToDB and then save data on file
-
-        // Call saveMetaToDB
         saveMetaToDB();
+        saveMetaToFile();
+    }
 
+    public void saveMetaToFile() {
         // Save Data on File
         File songFile = getFile();
-
-
         MusicMetadataSet src_set = null;
         try {
             src_set = new MyID3().read(songFile);
@@ -211,9 +210,16 @@ public class Song {
 
 
             File newFile = new File(BirdleDirectory, YTN + ".mp3");
-            new MyID3().write(songFile, newFile, src_set,meta);
+            new MyID3().write(songFile, newFile, src_set, meta);
 
             scanMedia(newFile);
+            songFile.delete();
+
+            SQLiteDatabase db = mDBHelper.getWritableDatabase();
+
+            String[] whereArgs = {String.valueOf(ID)};
+            db.delete(SongContract.SongSchema.TABLE_NAME, "id = ?", whereArgs);
+
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "save could not read Song File");
@@ -243,6 +249,8 @@ public class Song {
         }
 
     }
+
+
 
     // INTERNAL HELPER FUNCTIONS
 
@@ -278,12 +286,8 @@ public class Song {
         return null;
     }
 
-    private void fetchYTN(){
+    private void fetchYTN() {
         // Call youtubeinmp3 advanced API to get YTN using YTURL
-    }
-
-    private void saveMetaToFile(){
-        // Save meta from the object to an mp3 file and deletes the temporary birdle file
     }
 
     private void scanMedia(File file){
