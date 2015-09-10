@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -207,6 +208,7 @@ public class Song {
             meta.setAlbum("Birdle");
             meta.setArtist(artist);
 //            meta.addPicture(getAlbumArt());
+            ImageData albumArt = new ImageData(readFile(getAlbumArt()), "image/jpeg", "Album Art", 3);
 
 
             File newFile = new File(BirdleDirectory, YTN + ".mp3");
@@ -300,6 +302,27 @@ public class Song {
                     }
                 });
     }
+    private static byte[] readFile (File file) throws IOException {
+        // Open file
+        RandomAccessFile f = new RandomAccessFile(file, "r");
+        byte[] data = null;
+        try {
+            // Get and check length
+            long longlength = f.length();
+            int length = (int) longlength;
+            if (length != longlength) throw new IOException("File size >= 2 GB");
+
+            // Read file and return data
+            data = new byte[length];
+            f.readFully(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            f.close();
+        }
+        return data;
+    }
 
     // GETTERS AND SETTERS
 
@@ -337,9 +360,10 @@ public class Song {
         this.album = album;
     }
 
-    public ImageData getAlbumArt() {
+    public File getAlbumArt() {
         // Get File and return it as ImageData
-        return null;
+
+        return new File(BirdleDirectory, YTN + "_art.jpg");
     }
 
     public void setAlbumArt(String albumArt) {
