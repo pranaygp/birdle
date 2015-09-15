@@ -1,5 +1,6 @@
 package com.birdle.pranay.birdle;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -20,9 +21,7 @@ public class Stage extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        //final Song[] songs = Song.list();  //TODO: this is where we get array of songs
-        //s,s,ns,s,s>
-        Object[] songs = new Object[2];
+        Song[] songs = Song.list();
 
         songView[] songElements = new songView[songs.length];
 
@@ -35,8 +34,13 @@ public class Stage extends ActionBarActivity {
             root.addView(songElements[i]);
         }
 
+
+        //final Song[] songs = Song.list();  //TODO: this is where we get array of songs
+        //s,s,ns,s,s>
+
         //should be able to delete this
         //Fill our list View
+        /*
         TextView[] songTexts = {
                 (TextView) findViewById(R.id.song1Text),
                 (TextView) findViewById(R.id.song2Text),
@@ -46,15 +50,12 @@ public class Stage extends ActionBarActivity {
         };
 
 
+*/
 
+        for (int i = 0; i < songElements.length; i++) {
 
-        for (int i = 0; i < songTexts.length; i++) {
-
-
-
-            songTexts[i].setText("Test title by test artist"/*songs[i].getTitle() + " by " + songs[i].getArtist()*/);
             //set up gesture recognition
-            songTexts[i].setOnTouchListener(new View.OnTouchListener() {
+            songElements[i].setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     int action = MotionEventCompat.getActionMasked(event);
