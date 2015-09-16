@@ -19,7 +19,7 @@ public class songView extends TextView implements
 
 
     private String title, artist; // TODO: use a default from R.string...
-    private int mExampleColor = Color.RED; // TODO: use a default from R.color...
+    private int fontColor = Color.RED; // TODO: use a default from R.color...
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
     private Drawable mExampleDrawable;
 
@@ -67,9 +67,9 @@ public class songView extends TextView implements
 
         title = song.getTitle();
         artist= song.getArtist();
-        mExampleColor = a.getColor(
+        fontColor = a.getColor(
                 R.styleable.songView_exampleColor,
-                mExampleColor);
+                fontColor);
         // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
         // values that should fall on pixel boundaries.
         mExampleDimension = a.getDimension(
@@ -95,7 +95,7 @@ public class songView extends TextView implements
 
     private void invalidateTextPaintAndMeasurements() {
         mTextPaint.setTextSize(mExampleDimension);
-        mTextPaint.setColor(mExampleColor);
+        mTextPaint.setColor(fontColor);
         mTextWidth = mTextPaint.measureText(title);
 
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
@@ -108,11 +108,6 @@ public class songView extends TextView implements
 
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
 
@@ -142,18 +137,18 @@ public class songView extends TextView implements
      *
      * @return The example color attribute value.
      */
-    public int getExampleColor() {
-        return mExampleColor;
+    public int getFontColor() {
+        return fontColor;
     }
 
     /**
      * Sets the view's example color attribute value. In the example view, this color
      * is the font color.
      *
-     * @param exampleColor The example color attribute value to use.
+     * @param color The example color attribute value to use.
      */
-    public void setExampleColor(int exampleColor) {
-        mExampleColor = exampleColor;
+    public void setExampleColor(int color) {
+        fontColor = color;
         invalidateTextPaintAndMeasurements();
     }
 

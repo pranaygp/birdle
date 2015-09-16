@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ public class Stage extends ActionBarActivity {
 
         songView[] songElements = new songView[songs.length];
 
+
+
         //dynamically add the elements
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
 
@@ -34,23 +37,6 @@ public class Stage extends ActionBarActivity {
             root.addView(songElements[i]);
         }
 
-
-        //final Song[] songs = Song.list();  //TODO: this is where we get array of songs
-        //s,s,ns,s,s>
-
-        //should be able to delete this
-        //Fill our list View
-        /*
-        TextView[] songTexts = {
-                (TextView) findViewById(R.id.song1Text),
-                (TextView) findViewById(R.id.song2Text),
-                //(TextView) findViewById(R.id.song3Text),
-                //(TextView) findViewById(R.id.song4Text)
-
-        };
-
-
-*/
 
         for (int i = 0; i < songElements.length; i++) {
 
@@ -67,17 +53,6 @@ public class Stage extends ActionBarActivity {
                     return false;
                 }
             });
-        }
-
-        //Fill our list View
-        ImageView[] songImages = {
-                (ImageView) findViewById(R.id.song1Image),
-                (ImageView) findViewById(R.id.song2Image),
-                (ImageView) findViewById(R.id.song3Image),
-                (ImageView) findViewById(R.id.song4Image)};
-
-        for (int i = 0; i < songImages.length; i++) {
-            //songImages[i].setImage( songs[i].getArt());
         }
 
 
