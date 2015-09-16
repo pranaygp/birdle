@@ -154,11 +154,13 @@ public class Song {
         // Returns array of Songs from DB
         Cursor songsCursor = getListOfItems();
         Song[] songList = {};
-        songsCursor.moveToFirst();
+        if (songsCursor != null){
+            songsCursor.moveToFirst();
 
-        for (int i = 0; i < songsCursor.getCount(); i++) {
-            songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
-            songsCursor.moveToNext();
+            for (int i = 0; i < songsCursor.getCount(); i++) {
+                songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
+                songsCursor.moveToNext();
+            }
         }
 
         return songList;
