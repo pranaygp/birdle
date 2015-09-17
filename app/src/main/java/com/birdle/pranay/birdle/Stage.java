@@ -57,42 +57,6 @@ public class Stage extends ActionBarActivity {
 
 
 
-
-
-
-        /* this does it dynmaically, trying to do it with list view
-        songView[] songElements = new songView[songs.length];
-
-
-
-        //dynamically add the elements
-        ViewGroup root = (ViewGroup) findViewById(R.id.content);
-
-        for (int i = 0; i < songs.length; i++) {
-            songElements[i] = new songView(this, songs[i]);
-            root.addView(songElements[i]);
-            Log.d("Birdle Stage", "onCreate - item "+(i+1));
-        }
-
-
-        for (int i = 0; i < songElements.length; i++) {
-
-            //set up gesture recognition
-            songElements[i].setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    int action = MotionEventCompat.getActionMasked(event);
-
-                    if(action == MotionEvent.ACTION_DOWN) {
-                        //songs[i].save();
-                        //songs[i].delete();
-                    }
-                    return false;
-                }
-            });
-        }*/
-
-
     }
 
     @Override
