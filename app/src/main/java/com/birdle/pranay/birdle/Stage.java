@@ -1,6 +1,5 @@
 package com.birdle.pranay.birdle;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -8,11 +7,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.view.ViewGroup;
 import android.support.v4.view.MotionEventCompat;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 import javax.security.auth.login.LoginException;
 
@@ -24,6 +25,7 @@ public class Stage extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
+        ListView songListView = (ListView) findViewById(R.id.songListView);
 
 //        Debug
 
@@ -34,6 +36,30 @@ public class Stage extends ActionBarActivity {
 
         Song[] songs = {test1, test2, test3};
 
+        final ArrayList<Song> songList = new ArrayList<Song>();
+
+        for(int i=0; i< songs.length; i++) {
+            songList.add(songs[i]);
+        }
+
+        final ArrayAdapter songAdapter = new ArrayAdapter(this, R.layout.song_element_layout,songList);
+        songListView.setAdapter(songAdapter);
+
+        //set up the list view
+        songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //TODO Add functionality
+                songAdapter.notifyDataSetChanged();
+            }
+        });
+
+
+
+
+
+
+        /* this does it dynmaically, trying to do it with list view
         songView[] songElements = new songView[songs.length];
 
 
@@ -63,7 +89,7 @@ public class Stage extends ActionBarActivity {
                     return false;
                 }
             });
-        }
+        }*/
 
 
     }
