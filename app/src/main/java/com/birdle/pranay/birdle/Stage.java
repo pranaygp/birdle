@@ -3,24 +3,18 @@ package com.birdle.pranay.birdle;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.view.MotionEventCompat;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.view.LayoutInflater;
 import android.widget.TextView;
-import  android.widget.ImageView;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.security.auth.login.LoginException;
 
 
 public class Stage extends ActionBarActivity {
@@ -74,10 +68,10 @@ public class Stage extends ActionBarActivity {
 //        Debug
 
         Song test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
-        //test1.saveMetaToDB();
+        test1.saveMetaToDB();
 //        test.saveMetaToDB();
 
-        /* we're getting it as an arrayList
+
         Song[] songs = {test1};
 
         final ArrayList<Song> songList = new ArrayList<Song>();
@@ -87,7 +81,7 @@ public class Stage extends ActionBarActivity {
             songs[i].setTitle("Title");//TODO remove these lines
             songList.add(songs[i]);
         }
-        */
+
         final songAdapter songAdapter = new songAdapter(this, R.layout.song_element_layout, Song.listAsArrayList());
         songListView.setAdapter(songAdapter);
 
@@ -95,7 +89,7 @@ public class Stage extends ActionBarActivity {
         songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO Add functionality
+               // ((Song) songAdapter.getItem(position)).delete();
                 songAdapter.notifyDataSetChanged();
             }
         });
@@ -108,6 +102,7 @@ public class Stage extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_stage, menu);
+
         return true;
     }
 
