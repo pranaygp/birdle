@@ -30,15 +30,16 @@ public class Stage extends ActionBarActivity {
 //        Debug
 
         Song test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
-        Song test2 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
-        Song test3 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
+        test1.saveMetaToDB();
 //        test.saveMetaToDB();
 
-        Song[] songs = {test1, test2, test3};
+        Song[] songs = {test1};
 
         final ArrayList<Song> songList = new ArrayList<Song>();
 
         for(int i=0; i< songs.length; i++) {
+            songs[i].setArtist("Artist");  //TODO remove these lines
+            songs[i].setTitle("Title");//TODO remove these lines
             songList.add(songs[i]);
         }
 
