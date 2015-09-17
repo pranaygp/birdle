@@ -1,5 +1,6 @@
 package com.birdle.pranay.birdle;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -12,13 +13,56 @@ import android.support.v4.view.MotionEventCompat;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.view.LayoutInflater;
+import android.widget.TextView;
+import  android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.security.auth.login.LoginException;
 
 
 public class Stage extends ActionBarActivity {
+
+    private class songAdapter extends ArrayAdapter {
+
+        private Context context;
+        private ArrayList<Song> songs;
+
+        public songAdapter(Context context, int resourceID) {
+            super(context,resourceID);
+            init(context,null);
+
+        }
+
+        public songAdapter(Context context, int resourceID, ArrayList<Song> list) {
+            super(context,resourceID, list);
+            init(context, list);
+
+        }
+
+        private void init(Context context, ArrayList<Song> songs) {
+            this.context = context;
+            this.songs = songs;
+        }
+
+        @Override
+        public View getView (int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.song_element_layout, parent, false);
+            TextView titleTextView = (TextView) rowView.findViewById(R.id.title);
+            TextView artistTextView = (TextView) rowView.findViewById(R.id.artist);
+            ImageView albumArtView = (ImageView) rowView.findViewById(R.id.artwork);
+
+            titleTextView.setText(songs.get(position).getTitle());
+            artistTextView.setText(songs.get(position).getArtist());
+            //albumArtView.setImageURI(songs.get(position).getAlbumArt().toURI());
+
+            return rowView;
+        }
+
+    }
 
 
     @Override
@@ -33,6 +77,7 @@ public class Stage extends ActionBarActivity {
         //test1.saveMetaToDB();
 //        test.saveMetaToDB();
 
+        /* we're getting it as an arrayList
         Song[] songs = {test1};
 
         final ArrayList<Song> songList = new ArrayList<Song>();
@@ -42,8 +87,8 @@ public class Stage extends ActionBarActivity {
             songs[i].setTitle("Title");//TODO remove these lines
             songList.add(songs[i]);
         }
-
-        final ArrayAdapter songAdapter = new ArrayAdapter(this, R.layout.song_element_layout, R.id.artist, Song.listAsArrayList());
+        */
+        final songAdapter songAdapter = new songAdapter(this, R.layout.song_element_layout, Song.listAsArrayList());
         songListView.setAdapter(songAdapter);
 
         //set up the list view
