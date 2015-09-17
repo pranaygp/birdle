@@ -15,10 +15,10 @@ public class SongDBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SQL = "CREATE TABLE " +
             SongContract.SongSchema.TABLE_NAME + " (" +
                 SongContract.SongSchema._ID + " INTEGER PRIMARY KEY, " +
-                SongContract.SongSchema.COLUMN_NAME_SONG_YTN + " TEXT " +
-                SongContract.SongSchema.COLUMN_NAME_SONG_YTURL + " TEXT " +
-                SongContract.SongSchema.COLUMN_NAME_SONG_TITLE + " TEXT " +
-                SongContract.SongSchema.COLUMN_NAME_SONG_ARTIST + " TEXT " +
+                SongContract.SongSchema.COLUMN_NAME_SONG_YTN + " TEXT, " +
+                SongContract.SongSchema.COLUMN_NAME_SONG_YTURL + " TEXT, " +
+                SongContract.SongSchema.COLUMN_NAME_SONG_TITLE + " TEXT, " +
+                SongContract.SongSchema.COLUMN_NAME_SONG_ARTIST + " TEXT, " +
                 SongContract.SongSchema.COLUMN_NAME_SONG_ALBUM + " TEXT " +
             ");";
 

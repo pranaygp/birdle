@@ -3,6 +3,7 @@ package com.birdle.pranay.birdle;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import android.view.ViewGroup;
 import android.support.v4.view.MotionEventCompat;
 
+import javax.security.auth.login.LoginException;
+
 
 public class Stage extends ActionBarActivity {
 
@@ -22,19 +25,26 @@ public class Stage extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        Song[] songs = Song.list();
+//        Debug
+
+        Song test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
+        Song test2 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
+        Song test3 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
+//        test.saveMetaToDB();
+
+        Song[] songs = {test1, test2, test3};
 
         songView[] songElements = new songView[songs.length];
 
 
 
         //dynamically add the elements
-        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        ViewGroup root = (ViewGroup) findViewById(R.id.content);
 
         for (int i = 0; i < songs.length; i++) {
-            songElements[i] = new songView(this, (Song) songs[i]);
-
+            songElements[i] = new songView(this, songs[i]);
             root.addView(songElements[i]);
+            Log.d("Birdle Stage", "onCreate - item "+(i+1));
         }
 
 

@@ -66,7 +66,9 @@ public class songView extends TextView implements
         this.song = inSong;
 
         title = song.getTitle();
+        title = "title"; // DEBUG TODO: remove this line
         artist= song.getArtist();
+        artist = "artist"; // DEBUG TODO: remove this line
         fontColor = a.getColor(
                 R.styleable.songView_exampleColor,
                 fontColor);
