@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.util.Log;
 import  android.util.EventLogTags;
 
+@Deprecated
+
 public class songView extends TextView implements
         GestureDetector.OnGestureListener  {
 
