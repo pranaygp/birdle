@@ -43,7 +43,7 @@ public class Stage extends ActionBarActivity {
             songList.add(songs[i]);
         }
 
-        final ArrayAdapter songAdapter = new ArrayAdapter(this, R.layout.song_element_layout,songList);
+        final ArrayAdapter songAdapter = new ArrayAdapter(this, R.layout.song_element_layout, songList);
         songListView.setAdapter(songAdapter);
 
         //set up the list view
