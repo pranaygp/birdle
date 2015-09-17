@@ -153,24 +153,24 @@ public class Song {
 
     public static Song[] list(){
         // Returns array of Songs from DB
-//        Cursor songsCursor = getListOfItems();
-//        Song[] songList = {};
-//        if (songsCursor != null){
-//            songsCursor.moveToFirst();
-//
-//            for (int i = 0; i < songsCursor.getCount(); i++) {
-//                songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
-//                songsCursor.moveToNext();
-//            }
-//        }
+        Cursor songsCursor = getListOfItems();
+        Song[] songList = new Song[songsCursor.getCount()];
+        if (songsCursor != null){
+            songsCursor.moveToFirst();
 
-        return (Song[]) listAsArrayList().toArray();
+            for (int i = 0; i < songsCursor.getCount(); i++) {
+                songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
+                songsCursor.moveToNext();
+            }
+        }
+
+        return songList;
     }
 
     public static ArrayList<Song> listAsArrayList(){
         // Returns an ArrayList containing a list of all the songs from the database
         Cursor songsCursor = getListOfItems();
-        ArrayList<Song> arrayList = new ArrayList<Song>();
+        ArrayList<Song> arrayList = new ArrayList<>();
         for (Song song:
              list()) {
             arrayList.add(song);
