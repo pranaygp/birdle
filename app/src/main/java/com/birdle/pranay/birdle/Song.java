@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -194,14 +195,13 @@ public class Song {
 
     public void save(){
         //helper to call saveMetaToDB and then save data on file
-
-        // Call saveMetaToDB
         saveMetaToDB();
+        saveMetaToFile();
+    }
 
+    public void saveMetaToFile() {
         // Save Data on File
         File songFile = getFile();
-
-
         MusicMetadataSet src_set = null;
         try {
             src_set = new MyID3().read(songFile);
@@ -210,12 +210,20 @@ public class Song {
             meta.setAlbum("Birdle");
             meta.setArtist(artist);
 //            meta.addPicture(getAlbumArt());
+            ImageData albumArt = new ImageData(readFile(getAlbumArt()), "image/jpeg", "Album Art", 3);
 
 
             File newFile = new File(BirdleDirectory, YTN + ".mp3");
-            new MyID3().write(songFile, newFile, src_set,meta);
+            new MyID3().write(songFile, newFile, src_set, meta);
 
             scanMedia(newFile);
+            songFile.delete();
+
+            SQLiteDatabase db = mDBHelper.getWritableDatabase();
+
+            String[] whereArgs = {String.valueOf(ID)};
+            db.delete(SongContract.SongSchema.TABLE_NAME, "id = ?", whereArgs);
+
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "save could not read Song File");
@@ -246,6 +254,8 @@ public class Song {
 
     }
 
+
+
     // INTERNAL HELPER FUNCTIONS
 
     protected void onProgressUpdate(NotificationHelper mNotificationHelper, Integer... progress) {
@@ -267,7 +277,11 @@ public class Song {
 
     private static Cursor getListOfItems(){
         // Get List of songs as cursor
-        return null;
+
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        Cursor c = db.query(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema.COLUMN_NAMES, null, null, null, null, null);
+
+        return c;
     }
 
     private ArrayMap<String, String> getMetaFromPuller(){
@@ -276,12 +290,8 @@ public class Song {
         return null;
     }
 
-    private void fetchYTN(){
+    private void fetchYTN() {
         // Call youtubeinmp3 advanced API to get YTN using YTURL
-    }
-
-    private void saveMetaToFile(){
-        // Save meta from the object to an mp3 file and deletes the temporary birdle file
     }
 
     private void scanMedia(File file){
@@ -293,6 +303,27 @@ public class Song {
                         Log.i("ExternalStorage", "-> uri=" + uri);
                     }
                 });
+    }
+    private static byte[] readFile (File file) throws IOException {
+        // Open file
+        RandomAccessFile f = new RandomAccessFile(file, "r");
+        byte[] data = null;
+        try {
+            // Get and check length
+            long longlength = f.length();
+            int length = (int) longlength;
+            if (length != longlength) throw new IOException("File size >= 2 GB");
+
+            // Read file and return data
+            data = new byte[length];
+            f.readFully(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            f.close();
+        }
+        return data;
     }
 
     // GETTERS AND SETTERS
@@ -331,9 +362,10 @@ public class Song {
         this.album = album;
     }
 
-    public ImageData getAlbumArt() {
+    public File getAlbumArt() {
         // Get File and return it as ImageData
-        return null;
+
+        return new File(BirdleDirectory, YTN + "_art.jpg");
     }
 
     public void setAlbumArt(String albumArt) {
