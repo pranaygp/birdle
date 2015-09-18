@@ -38,7 +38,7 @@ public class HTTPHelper {
                 result = "Did not work!";
 
         } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
+            Log.d("InputStream", e.getMessage());
         }
 
         return result;

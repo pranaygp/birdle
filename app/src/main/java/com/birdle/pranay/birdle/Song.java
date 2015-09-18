@@ -30,6 +30,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.security.auth.login.LoginException;
+
 /**
  * Created by pranaygp on 9/1/15.
  */
@@ -53,6 +55,13 @@ public class Song {
     private static final String TAG = "Birdle";
 
     // CONSTRUCTORS
+    public Song(Context context){
+        // Initialize Context
+        mContext = context;
+
+        // Initialize DB Helper
+        mDBHelper = new SongDBHelper(context);
+    }
 
     public Song(Context context, String YTURL) throws JSONException{
         // Initialize Context
@@ -115,7 +124,9 @@ public class Song {
 
         //create a new temp STAGING file, specifying the path, and the filename
         //which we want to save the file as.
-        File file = new File(BirdleDirectory, YTN + ".birdle");
+        File file = new File(BirdleDirectory, YTN + "_temp.mp3");
+        
+
         Log.i("Birdle", "Song name: " + YTN);
 
         //this will be used to write the downloaded data into the file we created
@@ -180,7 +191,6 @@ public class Song {
 
     public static ArrayList<Song> listAsArrayList(){
         // Returns an ArrayList containing a list of all the songs from the database
-        Cursor songsCursor = getListOfItems();
         ArrayList<Song> arrayList = new ArrayList<>();
         for (Song song:
              list()) {
@@ -218,11 +228,11 @@ public class Song {
             src_set = new MyID3().read(songFile);
             MusicMetadata meta = (MusicMetadata) src_set.getSimplified();
             meta.setSongTitle(title);
-            meta.setAlbum("Birdle");
+            meta.setAlbum(album);
             meta.setArtist(artist);
 //            meta.addPicture(getAlbumArt());
             ImageData albumArt = new ImageData(readFile(getAlbumArt()), "image/jpeg", "Album Art", 3);
-
+            meta.addPicture(albumArt);
 
             File newFile = new File(BirdleDirectory, YTN + ".mp3");
             new MyID3().write(songFile, newFile, src_set, meta);
@@ -233,7 +243,7 @@ public class Song {
             SQLiteDatabase db = mDBHelper.getWritableDatabase();
 
             String[] whereArgs = {String.valueOf(ID)};
-            db.delete(SongContract.SongSchema.TABLE_NAME, "id = ?", whereArgs);
+            db.delete(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema._ID + " = ?", whereArgs);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -288,11 +298,8 @@ public class Song {
 
     private static Cursor getListOfItems(){
         // Get List of songs as cursor
-
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.query(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema.COLUMN_NAMES, null, null, null, null, null);
-
-        return c;
+        return db.query(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema.COLUMN_NAMES, null, null, null, null, null);
     }
 
     private ArrayMap<String, String> getMetaFromPuller(){
@@ -305,7 +312,7 @@ public class Song {
         String JSONstring = HTTPHelper.GET("http://youtubeinmp3.com/fetch/?format=JSON&video=" + YTURL);
         JSONObject JSON = new JSONObject(JSONstring);
         YTN = JSON.getString("title");
-        getFile();
+        Log.d(TAG, "fetchYTN - "+YTN);
     }
 
     private void scanMedia(File file){
@@ -348,7 +355,7 @@ public class Song {
     }
 
     public File getFile() {
-        File file = new File(BirdleDirectory, YTN + ".birdle");
+        File file = new File(BirdleDirectory, YTN + "_temp.mp3");
         return file;
     }
 

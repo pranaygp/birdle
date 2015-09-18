@@ -1,8 +1,13 @@
 package com.birdle.pranay.birdle;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +58,16 @@ public class Stage extends ActionBarActivity {
 
             titleTextView.setText(songs.get(position).getTitle());
             artistTextView.setText(songs.get(position).getArtist());
-            //albumArtView.setImageURI(songs.get(position).getAlbumArt().toURI());
+//            albumArtView.setImageURI(songs.get(position).getAlbumArt().toURI());
+
+//            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//            Bitmap bitmap = BitmapFactory.decodeFile(songs.get(position).getAlbumArt().getAbsolutePath(), bmOptions);
+//            bitmap = Bitmap.createScaledBitmap(bitmap, parent.getWidth(), parent.getHeight(), true);
+////            bitmap = Bitmap.createScaledBitmap(bitmap);
+//            albumArtView.setImageBitmap(bitmap);
+
+            Drawable d = Drawable.createFromPath(songs.get(position).getAlbumArt().getAbsolutePath());
+            albumArtView.setImageDrawable(d);
 
             return rowView;
         }
@@ -69,39 +83,31 @@ public class Stage extends ActionBarActivity {
 
 //        Debug
 
-        Song test1 = null;
-        try {
-            test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        Song test1 = null;
+
         //test1.saveMetaToDB();
 //        test.saveMetaToDB();
 
+        Song init = new Song(this);
 
-        Song[] songs = {test1};
+        final ArrayList<Song> songList = Song.listAsArrayList();
 
-        final ArrayList<Song> songList = new ArrayList<Song>();
+            final songAdapter songAdapter = new songAdapter(this, R.layout.song_element_layout, songList);
+            songListView.setAdapter(songAdapter);
+            Log.d("Birdle", "onCreate - " + Song.listAsArrayList().toString());
 
-        for(int i=0; i< songs.length; i++) {
-            songs[i].setArtist("Artist");  //TODO remove these lines
-            songs[i].setTitle("Title");//TODO remove these lines
-            songList.add(songs[i]);
-        }
 
-        final songAdapter songAdapter = new songAdapter(this, R.layout.song_element_layout, Song.listAsArrayList());
-        songListView.setAdapter(songAdapter);
 
-        //set up the list view
-        songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                (songList.get(position)).save();
-                songList.remove(position);
-                songAdapter.notifyDataSetChanged();
-            }
-        });
-
+            //set up the list view
+            songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("Birdle", "onItemClick - position: " + position);
+                    (songList.get(position)).save();
+                    songList.remove(position);
+                    songAdapter.notifyDataSetChanged();
+                }
+            });
 
 
     }

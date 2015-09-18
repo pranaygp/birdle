@@ -107,10 +107,10 @@ public class downloadSong extends IntentService {
                 try {
                     Song download = new Song(this, "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)]);
                     download.pullMeta();
+                    download.saveMetaToDB();
                     mNotificationHelper = new NotificationHelper(this, download.getTitle());
                     mNotificationHelper.createNotification();
                     download.download(mNotificationHelper);
-                    download.saveMetaToDB();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     sendNotification("JSON Error", "Contact developer");
