@@ -107,6 +107,7 @@ public class downloadSong extends IntentService {
                 Song download = new Song(this, "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)]);
                 download.pullMeta();
                 mNotificationHelper = new NotificationHelper(this, download.getTitle());
+                mNotificationHelper.createNotification();
                 try {
                     download.download(mNotificationHelper);
                 } catch (IOException e) {
