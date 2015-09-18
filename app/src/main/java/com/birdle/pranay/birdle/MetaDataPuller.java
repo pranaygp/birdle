@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
 
 /**
@@ -23,7 +24,7 @@ import java.net.URLEncoder;
 public class MetaDataPuller {
 
     private static final String TAG = "Birdle";
-    //private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
+    private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
     private static final String PLAYME_API_KEY =   "4c6773305653414887";
 
     public MetaDataPuller(){
@@ -36,14 +37,32 @@ public class MetaDataPuller {
     // then returns those 4 variables as a JSONObject for the  class. If the song isn't found
     // or an unexpected error occurs, return null
     //
-    public static ArrayMap<String, String> pull(String YTN) {
+    public static ArrayMap<String, String> pull(String YTN, Boolean useEchonest){
         //Variables to pull
         String title = "";
         String artist = "";
         String album = "";
         String albumArt = "";
+        String searchQuery = YTN;
 
-        String PlayMeJSONString = HTTPHelper.GET("http://api.playme.com/track.search?step=1&format=json&apikey=" + PLAYME_API_KEY + "&query=" + URLEncoder.encode(YTN));
+        if (useEchonest){
+            String EchonestJSONString = HTTPHelper.GET("http://developer.echonest.com/api/v4/song/search?api_key=" + ECHONEST_API_KEY + "&format=json&results=1&combined=" + URLEncoder.encode(YTN));
+            Log.i(TAG, EchonestJSONString);
+
+            try
+            {
+            JSONObject EchonestJSONObject = new JSONObject(EchonestJSONString);
+            EchonestJSONObject = EchonestJSONObject.getJSONObject("response");
+            JSONArray EchonestSongsJSONArray= EchonestJSONObject.getJSONArray("songs");
+            JSONObject EchonestMeta = EchonestSongsJSONArray.getJSONObject(0);
+
+            searchQuery = EchonestMeta.getString("title") + " - " + EchonestMeta.getString("title");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String PlayMeJSONString = HTTPHelper.GET("http://api.playme.com/track.search?step=1&format=json&apikey=" + PLAYME_API_KEY + "&query=" + URLEncoder.encode(searchQuery));
         Log.d(TAG, PlayMeJSONString + "\n"); //Debug Line
 
         try {
@@ -75,7 +94,6 @@ public class MetaDataPuller {
             //Handle incorrect parse/ no song found
             return null;
         }
-
     }
 
 }

@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
@@ -29,8 +27,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
-import javax.security.auth.login.LoginException;
 
 /**
  * Created by pranaygp on 9/1/15.
@@ -304,7 +300,7 @@ public class Song {
 
     private ArrayMap<String, String> getMetaFromPuller(){
         // Uses the metadataPuller class to return an ArrayMap
-        return MetaDataPuller.pull(YTN);
+        return MetaDataPuller.pull(YTN, true);
     }
 
     private void fetchYTN() throws JSONException{
