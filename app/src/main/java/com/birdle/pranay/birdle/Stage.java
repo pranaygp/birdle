@@ -83,9 +83,14 @@ public class Stage extends ActionBarActivity {
 
 //        Debug
 
-//        Song test1 = null;
+        try {
+            Song test1 = new Song(this, "www.youtube.com/watch?v=8aJw4chksqM");
+            test1.saveMetaToDB();
 
-        //test1.saveMetaToDB();
+        } catch (JSONException e) {
+            System.out.print(e.getStackTrace());
+        }
+
 //        test.saveMetaToDB();
 
         Song init = new Song(this);

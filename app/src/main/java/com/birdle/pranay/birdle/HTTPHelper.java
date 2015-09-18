@@ -20,6 +20,7 @@ public class HTTPHelper {
     public static String GET(String url){
         InputStream inputStream = null;
         String result = "";
+        String Failiure_message = "search attempt failed";
         try {
 
             // create HttpClient
@@ -32,13 +33,18 @@ public class HTTPHelper {
             inputStream = httpResponse.getEntity().getContent();
 
             // convert inputstream to string
-            if(inputStream != null)
+            if(inputStream != null) {
                 result = convertInputStreamToString(inputStream);
-            else
+            } else {
                 result = "Did not work!";
+                throw new Exception(Failiure_message);
+            }
 
         } catch (Exception e) {
-            Log.d("InputStream", e.getMessage());
+            if(e.getMessage().equals(Failiure_message)) {
+                //TODO decide behavior if search fails
+            }
+            Log.d("InputStream", e.getStackTrace().toString());
         }
 
         return result;
