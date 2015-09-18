@@ -1,1 +1,1 @@
-include ':app', ':MyID3_for_Android', ':jakarta-regexp-1.5'
+include ':MyID3_for_Android', ':app', ':jakarta-regexp-1.5'

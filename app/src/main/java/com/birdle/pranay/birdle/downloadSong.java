@@ -60,51 +60,24 @@ public class downloadSong extends IntentService {
 
     private NotificationHelper mNotificationHelper;
     public static final Integer BUFFER_SIZE = 524288/2;
-    private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
+//    private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
 
-    private static final String PREFERENCE_FILE = "preference";
-    private static final String ISDOWNLOADED = "isdownloaded";
-    private static String YTURL;
-    private static String YTN;
-    SharedPreferences settings;
-    SharedPreferences.Editor editor;
-    Context context;
+//    private static final String PREFERENCE_FILE = "preference";
+//    private static final String ISDOWNLOADED = "isdownloaded";
+//    private static String YTURL;
+//    private static String YTN;
+//    SharedPreferences settings;
+//    SharedPreferences.Editor editor;
+//    Context context;
 
-    public static final int NOTIFICATION_ID = 1;
+//    public static final int NOTIFICATION_ID = 1;
     private static final String TAG = "Birdle";
     private NotificationManager mNotificationManager;
-    NotificationCompat.Builder builder;
+//    NotificationCompat.Builder builder;
 
 
     public downloadSong() {
         super("downloadSong");
-    }
-
-    public static String GET(String url){
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            // create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
-
-            // make GET request to the given URL
-            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
-
-            // receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
-
-            // convert inputstream to string
-            if(inputStream != null)
-                result = convertInputStreamToString(inputStream);
-            else
-                result = "Did not work!";
-
-        } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
-        }
-
-        return result;
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException{
@@ -130,150 +103,25 @@ public class downloadSong extends IntentService {
                 Log.i(TAG, " Data received: " + intent.getStringExtra(Intent.EXTRA_TEXT));
                 int length = data.length;
                 String[] urlO = data[(length-1)].split("/");
-                YTURL = "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)];
-                YTN = "Downloading Song...";
 
-                String JSONstring = GET("http://youtubeinmp3.com/fetch/?format=JSON&video=" + YTURL);
                 try {
-                    JSONObject JSON = new JSONObject(JSONstring);
-                    YTN = JSON.getString("title");
-                    mNotificationHelper = new NotificationHelper(this, YTN);
-                    getFile();
-
+                    Song download = new Song(this, "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)]);
+                    download.pullMeta();
+                    download.saveMetaToDB();
+                    mNotificationHelper = new NotificationHelper(this, download.getTitle());
+                    mNotificationHelper.createNotification();
+                    download.download(mNotificationHelper);
+                    mNotificationHelper.completed();
+                    sendNotification("Birdle", "Downloaded" + download.getTitle());
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    sendNotification("JSON Error", "Please contact the dev or wait for an update", false);
+                    sendNotification("JSON Error", "Contact developer");
+                } catch (IOException e){
+                    e.printStackTrace();
+                    sendNotification("Unexpected Error", "ContactDeveloper");
                 }
             }
         }
-    }
-
-    private void getFile() {
-        try {
-            //set the download URL, a url that points to a file on the internet
-            //this is the file to be downloaded
-            startForeground(1,mNotificationHelper.createNotification());
-
-            URL url = new URL("http://YouTubeInMP3.com/fetch/?video=" + YTURL);
-
-            //create the new connection
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            //set up some things on the connection
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setDoOutput(true);
-
-            InputStream inputStream = urlConnection.getInputStream();
-            //and connect!
-            urlConnection.connect();
-
-            //set the path where we want to save the file
-            //in this case, going to save it on the root directory of the
-            //sd card.
-//            File BirdleDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-            File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
-            BirdleDirectory.mkdirs(); //attempt to make the directory
-            //create a new file, specifying the path, and the filename
-            //which we want to save the file as.
-            File file = new File(BirdleDirectory, YTN + "_temp.mp3");
-            Log.i("Birdle", "Song name: " + YTN);
-
-            //this will be used to write the downloaded data into the file we created
-            FileOutputStream fileOutput = new FileOutputStream(file);
-
-            //this will be used in reading the data from the internet
-
-            //this is the total size of the file
-            int totalSize = urlConnection.getContentLength();
-            //variable to store total downloaded bytes
-            int downloadedSize = 0;
-
-            //create a buffer...
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bufferLength = 0; //used to store a temporary size of the buffer
-
-            //now, read through the input buffer and write the contents to the file
-            while ((bufferLength = inputStream.read(buffer)) > 0) {
-                //add the data in the buffer to the file in the file output stream (the file on the sd card
-                fileOutput.write(buffer, 0, bufferLength);
-                //add up the size so we know how much is downloaded
-                downloadedSize += bufferLength;
-                //this is where you would do something to report the prgress, like this maybe
-                //updateProgress(downloadedSize, totalSize);
-                onProgressUpdate((int) ((downloadedSize * 100) / totalSize));
-
-            }
-            //close the output stream when done
-            fileOutput.close();
-            File img = resToFile();
-//            ImageData data = new ImageData(readFile(img), "image/jpeg", "Default Album Art",3);
-
-
-            String EchonestJSONString = GET("http://developer.echonest.com/api/v4/song/search?api_key=" + ECHONEST_API_KEY + "&format=json&results=1&combined=" + URLEncoder.encode(YTN));
-            Log.i(TAG, EchonestJSONString);
-
-
-            JSONObject EchonestJSONObject = new JSONObject(EchonestJSONString);
-            EchonestJSONObject = EchonestJSONObject.getJSONObject("response");
-            JSONArray EchonestSongsJSONArray= EchonestJSONObject.getJSONArray("songs");
-            JSONObject EchonestMeta = EchonestSongsJSONArray.getJSONObject(0);
-
-
-            SetID3Data(); //TODO: define this function
-
-            MusicMetadataSet src_set = new MyID3().read(file);
-            MusicMetadata meta = (MusicMetadata) src_set.getSimplified();
-            meta.setSongTitle(EchonestMeta.getString("title"));
-            meta.setAlbum("Birdle");
-            meta.setArtist(EchonestMeta.getString("artist_name"));
-//            meta.addPicture(data);
-
-
-            File newFile = new File(BirdleDirectory, YTN + ".mp3");
-            new MyID3().write(file, newFile, src_set,meta);
-
-
-
-            MediaScannerConnection.scanFile(getApplicationContext(),
-                    new String[]{newFile.toString()}, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        public void onScanCompleted(String path, Uri uri) {
-                            Log.i("ExternalStorage", "Scanned " + path + ":");
-                            Log.i("ExternalStorage", "-> uri=" + uri);
-                        }
-                    });
-            file.delete();
-            sendNotification("Birdle", "Downloaded " + YTN, true);
-//catch some possible errors...
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
-            sendNotification("Birdle Error", "The song wasn't found. Try another video or try again later");
-        }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-            sendNotification("Birdle Error", "An unexpected error occur. Ensure that you made a request from YouTube");
-        } catch (IOException e) {
-            e.printStackTrace();
-            sendNotification("Birdle Error", "The song wasn't found. Try another video or try again later");
-        } catch (ID3WriteException e) {
-            e.printStackTrace();
-            sendNotification("Birdle Error", "Could not write ID3 tags.");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            sendNotification("Birdle Error", "Could not contact Echonest.", false);
-        }
-        stopForeground(true);
-    }
-
-    private void SetID3Data() {
-        //TODO: Move ID3 tagging functionality here
-    }
-
-    protected void onProgressUpdate(Integer... progress) {
-        //This method runs on the UI thread, it receives progress updates
-        //from the background thread and publishes them to the status bar
-        mNotificationHelper.progressUpdate(progress[0]);
-        Log.i(TAG, String.valueOf(progress[0]));
     }
 
     private void sendNotification(String title, String msg, Boolean... options) {
@@ -281,25 +129,15 @@ public class downloadSong extends IntentService {
 
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent contentIntent;
+        PendingIntent contentIntent = null;
 
-        if (options[0] != null && options[0]){
-            Intent intent = new Intent();
-            ComponentName comp = new ComponentName("com.android.music", "com.android.music.MediaPlaybackActivity");
-            intent.setComponent(comp);
-            intent.setAction(android.content.Intent.ACTION_RUN);
-
-            File BirdleDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/Birdle/");
-            BirdleDirectory.mkdirs();
-            File file = new File(BirdleDirectory, YTN + ".mp3");
-
-            intent.setDataAndType(Uri.fromFile(file), "audio/*");
-
+        if (options.length > 0 && options[0]){
+            //TODO: Goto Song edit activity
             contentIntent = PendingIntent.getActivity(this, 0,
-                    intent, 0);
+                    new Intent(this, Stage.class), 0);
         } else {
             contentIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, downloader.class), 0);
+                    new Intent(this, Stage.class), 0);
         }
 
         NotificationCompat.Builder mBuilder =
@@ -315,52 +153,5 @@ public class downloadSong extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(2, mBuilder.build());
-    }
-
-    public static byte[] readFile (File file) throws IOException {
-        // Open file
-        RandomAccessFile f = new RandomAccessFile(file, "r");
-        byte[] data = null;
-        try {
-            // Get and check length
-            long longlength = f.length();
-            int length = (int) longlength;
-            if (length != longlength) throw new IOException("File size >= 2 GB");
-
-            // Read file and return data
-            data = new byte[length];
-            f.readFully(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            f.close();
-        }
-        return data;
-    }
-    private File resToFile() {
-//        File BirdlePicsDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/Birdle/");
-//        BirdlePicsDir.mkdirs();
-//        File file = new File(BirdlePicsDir, "default_album_art.jpg");
-//        if(file.exists()) {
-//            return file;
-//        }
-//
-//        InputStream is;
-//        try {
-//            FileOutputStream fos = new FileOutputStream(file);
-//            AssetManager am = getApplicationContext().getResources().getAssets();
-//            is = am.open("default_album_art.jpg");
-//            byte[] buffer = new byte[is.available()];
-//            is.read(buffer);
-//            fos = openFileOutput(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"default_album_art.jpg");
-//            fos.write(buffer);
-//            fos.close();
-//            is.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return file;
-        return null;
     }
 }

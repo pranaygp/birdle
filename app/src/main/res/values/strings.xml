@@ -7,5 +7,6 @@
     <string name="download_ticker">Downloading…</string>
     <string name="content_title">Downloading Song</string>
     <string name="title_activity_ytapp_intent_receiver">Download Song</string>
+    <string name="title_activity_stage">Birdle</string>
 
 </resources>

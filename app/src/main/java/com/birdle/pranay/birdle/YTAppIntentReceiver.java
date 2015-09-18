@@ -13,13 +13,13 @@ public class YTAppIntentReceiver extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ytapp_intent_receiver);
+        //setContentView(R.layout.activity_ytapp_intent_receiver);
 
         Intent intent = getIntent();
         Intent newIntent = new Intent(intent);
         newIntent.setClass(this, downloadSong.class);
         startService(newIntent);
-//        finish();
+        finish();
     }
 
     @Override
