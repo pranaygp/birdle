@@ -111,6 +111,8 @@ public class downloadSong extends IntentService {
                     mNotificationHelper = new NotificationHelper(this, download.getTitle());
                     mNotificationHelper.createNotification();
                     download.download(mNotificationHelper);
+                    mNotificationHelper.completed();
+                    sendNotification("Birdle", "Downloaded" + download.getTitle());
                 } catch (JSONException e) {
                     e.printStackTrace();
                     sendNotification("JSON Error", "Contact developer");
@@ -129,8 +131,10 @@ public class downloadSong extends IntentService {
 
         PendingIntent contentIntent = null;
 
-        if (options[0] != null && options[0]){
-
+        if (options.length > 0 && options[0]){
+            //TODO: Goto Song edit activity
+            contentIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, Stage.class), 0);
         } else {
             contentIntent = PendingIntent.getActivity(this, 0,
                     new Intent(this, Stage.class), 0);
