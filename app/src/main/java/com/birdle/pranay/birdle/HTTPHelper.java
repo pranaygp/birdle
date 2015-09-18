@@ -41,10 +41,7 @@ public class HTTPHelper {
             }
 
         } catch (Exception e) {
-            if(e.getMessage().equals(Failiure_message)) {
-                //TODO decide behavior if search fails
-            }
-            Log.d("InputStream", e.getStackTrace().toString());
+            e.printStackTrace();
         }
 
         return result;
