@@ -17,6 +17,8 @@ import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +54,7 @@ public class Song {
 
     // CONSTRUCTORS
 
-    public Song(Context context, String YTURL){
+    public Song(Context context, String YTURL) throws JSONException{
         // Initialize Context
         mContext = context;
 
@@ -86,7 +88,7 @@ public class Song {
 
     // PUBLIC FUNCTIONS
 
-    public void download(NotificationHelper mNotificationHelper) throws IOException{
+    public void download(NotificationHelper mNotificationHelper) throws IOException, JSONException{
 
         Integer BUFFER_SIZE = 262144;
 
@@ -147,30 +149,39 @@ public class Song {
 
     public void pullMeta(){
         // Call getMetaFromPuller here
+        ArrayMap<String, String> meta = getMetaFromPuller();
+
         // Assign its values to the class fields
+
+        this.title = meta.get("title");
+        this.artist = meta.get("artist");
+        this.album = meta.get("album");
+        setAlbumArt(meta.get("albumArt"));
+
         // Call saveMetaToDB
+        saveMetaToDB();
     }
 
     public static Song[] list(){
         // Returns array of Songs from DB
-//        Cursor songsCursor = getListOfItems();
-//        Song[] songList = {};
-//        if (songsCursor != null){
-//            songsCursor.moveToFirst();
-//
-//            for (int i = 0; i < songsCursor.getCount(); i++) {
-//                songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
-//                songsCursor.moveToNext();
-//            }
-//        }
+        Cursor songsCursor = getListOfItems();
+        Song[] songList = new Song[songsCursor.getCount()];
+        if (songsCursor != null){
+            songsCursor.moveToFirst();
 
-        return (Song[]) listAsArrayList().toArray();
+            for (int i = 0; i < songsCursor.getCount(); i++) {
+                songList[i] = new Song(mContext, songsCursor.getLong(songsCursor.getColumnIndexOrThrow(SongContract.SongSchema._ID)));
+                songsCursor.moveToNext();
+            }
+        }
+
+        return songList;
     }
 
     public static ArrayList<Song> listAsArrayList(){
         // Returns an ArrayList containing a list of all the songs from the database
         Cursor songsCursor = getListOfItems();
-        ArrayList<Song> arrayList = new ArrayList<Song>();
+        ArrayList<Song> arrayList = new ArrayList<>();
         for (Song song:
              list()) {
             arrayList.add(song);
@@ -190,7 +201,7 @@ public class Song {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         String[] whereArgs = {String.valueOf(ID)};
 
-        db.delete(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema._ID + "=?",whereArgs);
+        db.delete(SongContract.SongSchema.TABLE_NAME, SongContract.SongSchema._ID + "=?", whereArgs);
     }
 
     public void save(){
@@ -286,12 +297,15 @@ public class Song {
 
     private ArrayMap<String, String> getMetaFromPuller(){
         // Uses the metadataPuller class to return an ArrayMap
-        // Example: return metadataPuller.pull(YTN);
-        return null;
+        return MetaDataPuller.pull(YTN);
     }
 
-    private void fetchYTN() {
+    private void fetchYTN() throws JSONException{
         // Call youtubeinmp3 advanced API to get YTN using YTURL
+        String JSONstring = HTTPHelper.GET("http://youtubeinmp3.com/fetch/?format=JSON&video=" + YTURL);
+        JSONObject JSON = new JSONObject(JSONstring);
+        YTN = JSON.getString("title");
+        getFile();
     }
 
     private void scanMedia(File file){
@@ -363,13 +377,55 @@ public class Song {
     }
 
     public File getAlbumArt() {
-        // Get File and return it as ImageData
-
+        // Return Image File
         return new File(BirdleDirectory, YTN + "_art.jpg");
     }
 
     public void setAlbumArt(String albumArt) {
         // Parse String as URL and save the downloaded image to File
+        String filepath = "";
+        try
+        {
+            URL url = new URL(albumArt);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+            File SDCardRoot = Environment.getExternalStorageDirectory().getAbsoluteFile();
+            String filename= YTN + "_art.jpg";
+            Log.i("Local filename:",""+filename);
+            File file = new File(BirdleDirectory,filename);
+            if(file.createNewFile())
+            {
+                file.createNewFile();
+            }
+            FileOutputStream fileOutput = new FileOutputStream(file);
+            InputStream inputStream = urlConnection.getInputStream();
+            int totalSize = urlConnection.getContentLength();
+            int downloadedSize = 0;
+            byte[] buffer = new byte[1024];
+            int bufferLength = 0;
+            while ( (bufferLength = inputStream.read(buffer)) > 0 )
+            {
+                fileOutput.write(buffer, 0, bufferLength);
+                downloadedSize += bufferLength;
+                Log.i("Progress:","downloadedSize:"+downloadedSize+"totalSize:"+ totalSize) ;
+            }
+            fileOutput.close();
+            if(downloadedSize==totalSize){
+                filepath=file.getPath();
+            }
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            filepath=null;
+            e.printStackTrace();
+        }
+        Log.i("filepath:"," "+filepath);
     }
 
 }
