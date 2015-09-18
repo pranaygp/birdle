@@ -56,7 +56,8 @@ public class MetaDataPuller {
             JSONArray EchonestSongsJSONArray= EchonestJSONObject.getJSONArray("songs");
             JSONObject EchonestMeta = EchonestSongsJSONArray.getJSONObject(0);
 
-            searchQuery = EchonestMeta.getString("title") + " - " + EchonestMeta.getString("title");
+            searchQuery = EchonestMeta.getString("artist") + " - " + EchonestMeta.getString("title");
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
