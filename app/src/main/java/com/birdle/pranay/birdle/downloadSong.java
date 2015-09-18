@@ -104,17 +104,20 @@ public class downloadSong extends IntentService {
                 int length = data.length;
                 String[] urlO = data[(length-1)].split("/");
 
-                Song download = new Song(this, "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)]);
-                download.pullMeta();
-                mNotificationHelper = new NotificationHelper(this, download.getTitle());
-                mNotificationHelper.createNotification();
                 try {
+                    Song download = new Song(this, "http://www.youtube.com/watch?v=" + urlO[(urlO.length - 1)]);
+                    download.pullMeta();
+                    mNotificationHelper = new NotificationHelper(this, download.getTitle());
+                    mNotificationHelper.createNotification();
                     download.download(mNotificationHelper);
-                } catch (IOException e) {
+                    download.saveMetaToDB();
+                } catch (JSONException e) {
                     e.printStackTrace();
                     sendNotification("JSON Error", "Contact developer");
+                } catch (IOException e){
+                    e.printStackTrace();
+                    sendNotification("Unexpected Error", "ContactDeveloper");
                 }
-                download.saveMetaToDB();
             }
         }
     }

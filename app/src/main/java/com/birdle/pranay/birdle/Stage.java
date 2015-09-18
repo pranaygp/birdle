@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 
@@ -67,7 +69,12 @@ public class Stage extends ActionBarActivity {
 
 //        Debug
 
-        Song test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
+        Song test1 = null;
+        try {
+            test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //test1.saveMetaToDB();
 //        test.saveMetaToDB();
 
