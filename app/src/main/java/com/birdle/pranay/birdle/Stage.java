@@ -68,7 +68,7 @@ public class Stage extends ActionBarActivity {
 //        Debug
 
         Song test1 = new Song(this, "https://youtube.com/watch?v=Wevqe12A2");
-        test1.saveMetaToDB();
+        //test1.saveMetaToDB();
 //        test.saveMetaToDB();
 
 
@@ -89,7 +89,8 @@ public class Stage extends ActionBarActivity {
         songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               // ((Song) songAdapter.getItem(position)).delete();
+                (songList.get(position)).save();
+                songList.remove(position);
                 songAdapter.notifyDataSetChanged();
             }
         });
