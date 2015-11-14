@@ -112,7 +112,7 @@ public class downloadSong extends IntentService {
                     mNotificationHelper.createNotification();
                     download.download(mNotificationHelper);
                     mNotificationHelper.completed();
-                    sendNotification("Birdle", "Downloaded" + download.getTitle());
+                    sendNotification("Birdle", "Downloaded " + download.getTitle());
                 } catch (JSONException e) {
                     e.printStackTrace();
                     sendNotification("JSON Error", "Contact developer");
