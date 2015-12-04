@@ -29,8 +29,8 @@ public class MetaDataPuller {
     private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
     private static final String PLAYME_API_KEY =   "4c6773305653414887";
     private static final String LAST_FM_API_KEY = "063b843482af18d1208146bd9d5018d3";
-    public static final boolean useLastFM = false;
-    public static final boolean useSpotify = true;
+    public static final boolean useLastFM = true;
+    public static boolean useSpotify = false;
     public static final boolean usePlayMe = false;
 
     public MetaDataPuller(){
@@ -89,10 +89,14 @@ public class MetaDataPuller {
 
             try{
                 JSONObject LastFMJSONObject = new JSONObject(LastFMJSONString);
-                JSONObject LastFMAlbumInfo = LastFMJSONObject.getJSONObject("track").getJSONObject("album");
+                if(!LastFMJSONObject.getJSONObject("track").has("album")){
+                    useSpotify = true;
+                } else {
+                    JSONObject LastFMAlbumInfo = LastFMJSONObject.getJSONObject("track").getJSONObject("album");
 
-                album = LastFMAlbumInfo.getString("title");
-                albumArt = LastFMAlbumInfo.getJSONArray("image").getJSONObject(1).getString("#text");
+                    album = LastFMAlbumInfo.getString("title");
+                    albumArt = LastFMAlbumInfo.getJSONArray("image").getJSONObject(1).getString("#text");
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
