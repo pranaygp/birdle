@@ -300,7 +300,7 @@ public class Song {
 
     private ArrayMap<String, String> getMetaFromPuller(){
         // Uses the metadataPuller class to return an ArrayMap
-        return MetaDataPuller.pull(YTN, false);
+        return MetaDataPuller.pull(YTN, true);
     }
 
     private void fetchYTN() throws JSONException{
