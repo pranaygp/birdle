@@ -49,6 +49,40 @@ public class HTTPHelper {
         return result;
     }
 
+    public static String GET(String url, String title, String value){
+        InputStream inputStream = null;
+        String result = "";
+        String Failiure_message = "search attempt failed";
+        try {
+
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpGet httpGetter = new HttpGet(url);
+
+            httpGetter.addHeader(title, value);
+
+            // make GET request to the given URL
+            HttpResponse httpResponse = httpclient.execute(httpGetter);
+
+            // receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+
+            // convert inputstream to string
+            if(inputStream != null) {
+                result = convertInputStreamToString(inputStream);
+            } else {
+                result = "Did not work!";
+                throw new Exception(Failiure_message);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";

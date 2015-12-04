@@ -29,7 +29,8 @@ public class MetaDataPuller {
     private static final String ECHONEST_API_KEY = "2CPBG5CSF0058GDDP";
     private static final String PLAYME_API_KEY =   "4c6773305653414887";
     private static final String LAST_FM_API_KEY = "063b843482af18d1208146bd9d5018d3";
-    public static final boolean useLastFM = true;
+    public static final boolean useLastFM = false;
+    public static final boolean useSpotify = true;
     public static final boolean usePlayMe = false;
 
     public MetaDataPuller(){
@@ -70,7 +71,7 @@ public class MetaDataPuller {
             title = EchonestMeta.getString("title");
 
 
-            //searchQuery = EchonestMeta.getString("artist_name") + " - " + EchonestMeta.getString("title");
+            searchQuery = EchonestMeta.getString("artist_name") + " - " + EchonestMeta.getString("title");
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -95,6 +96,26 @@ public class MetaDataPuller {
 
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+
+        if(useSpotify){
+            String SpotifyJSONString = HTTPHelper.GET("https://api.spotify.com/v1/search?type=track&q=" + URLEncoder.encode(searchQuery));
+            Log.d(TAG, SpotifyJSONString + "\n"); //Debug Line
+
+            try {
+                JSONObject SpotifyJSONObject = new JSONObject(SpotifyJSONString);
+                SpotifyJSONObject = SpotifyJSONObject.getJSONObject("tracks");
+                JSONObject SpotifyFirstResult = SpotifyJSONObject.getJSONArray("items").getJSONObject(0);
+                JSONObject SpotifyAlbumObject = SpotifyFirstResult.getJSONObject("album");
+
+                album = SpotifyAlbumObject.getString("name");
+                albumArt = SpotifyAlbumObject.getJSONArray("images").getJSONObject(1).getString("url");
+
+
+            } catch (JSONException e) {
+                //Handle incorrect parse/ no song found
+                return null;
             }
         }
 

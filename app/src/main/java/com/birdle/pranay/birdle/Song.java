@@ -395,7 +395,7 @@ public class Song {
             urlConnection.setDoOutput(true);
             urlConnection.connect();
             File SDCardRoot = Environment.getExternalStorageDirectory().getAbsoluteFile();
-            String filename= YTN + "_art.jpg";
+            String filename= YTN + "_art.jpeg";
             Log.i("Local filename:",""+filename);
             File file = new File(BirdleDirectory,filename);
             if(file.createNewFile())
