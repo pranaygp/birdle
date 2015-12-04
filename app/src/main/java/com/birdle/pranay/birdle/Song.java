@@ -390,6 +390,9 @@ public class Song {
         try
         {
             URL url = new URL(albumArt);
+            if(MetaDataPuller.useSpotify) {
+                
+            }
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoOutput(true);
