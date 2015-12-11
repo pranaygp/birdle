@@ -10,11 +10,13 @@ import android.os.Environment;
 import android.util.ArrayMap;
 import android.util.Log;
 
+import org.apache.http.protocol.HTTP;
 import org.cmc.music.common.ID3WriteException;
 import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +28,7 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -300,7 +303,7 @@ public class Song {
 
     private ArrayMap<String, String> getMetaFromPuller(){
         // Uses the metadataPuller class to return an ArrayMap
-        return MetaDataPuller.pull(YTN, false);
+        return MetaDataPuller.pull(YTN, true);
     }
 
     private void fetchYTN() throws JSONException{
@@ -390,6 +393,37 @@ public class Song {
         try
         {
             URL url = new URL(albumArt);
+            if(MetaDataPuller.useSpotify) {
+
+                albumArt = "http://" + albumArt.split("://")[1];
+
+                String JSONInput = "[{\"type\":\"remote\",\"source\":\"" +  albumArt + "\"}]";
+                String JSONConversion = "[{\"target\":\"jpg\"}]";
+                String JSONBody = "{\"input\":" + JSONInput + ",\"conversion\":" + JSONConversion + "}";
+
+                Log.d(TAG, "JSONBody = " + JSONBody);
+
+                String JobPostJSON = HTTPHelper.POST("https://api2.online-convert.com/jobs", "X-Oc-Api-Key", "922a7152ce7c43b001cdf42971aad6ef", JSONBody);
+                Log.d(TAG, "JobPostJSON = " + JobPostJSON);
+
+
+                JSONObject JSONresponse = new JSONObject(JobPostJSON);
+
+                String JobOutputJSON = "";
+                do {
+                    JobOutputJSON = HTTPHelper.GET("https://api2.online-convert.com/jobs/" + JSONresponse.getString("id") + "", "X-Oc-Api-Key", "922a7152ce7c43b001cdf42971aad6ef");
+//                String JobOutputJSON = HTTPHelper.GET("https://api2.online-convert.com/jobs/" + "af88dbe5-9a6c-11e5-9d07-002590d8633c" + "", "X-Oc-Api-Key", "922a7152ce7c43b001cdf42971aad6ef");
+//                    Log.d(TAG, "JobOutputJSON = " + JobOutputJSON);
+                } while ((new JSONObject(JobOutputJSON).getJSONObject("status").getString("code")).equals("queued"));
+
+                JobOutputJSON = HTTPHelper.GET("https://api2.online-convert.com/jobs/" + JSONresponse.getString("id") + "/output", "X-Oc-Api-Key", "922a7152ce7c43b001cdf42971aad6ef");
+//                String JobOutputJSON = HTTPHelper.GET("https://api2.online-convert.com/jobs/" + "af88dbe5-9a6c-11e5-9d07-002590d8633c" + "", "X-Oc-Api-Key", "922a7152ce7c43b001cdf42971aad6ef");
+                Log.d(TAG, "JobOutputJSON = " + JobOutputJSON);
+
+                url = new URL((new JSONArray(JobOutputJSON)).getJSONObject(0).getString("uri"));
+                Log.d(TAG, "Album Art URL = " + url);
+
+            }
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoOutput(true);
@@ -427,8 +461,10 @@ public class Song {
         {
             filepath=null;
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        Log.i("filepath:"," "+filepath);
+        Log.i("filepath:", " " + filepath);
     }
 
 }
